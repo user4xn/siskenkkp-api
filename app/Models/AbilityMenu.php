@@ -19,4 +19,8 @@ class AbilityMenu extends Model
     public function parentMenu() {
         return $this->hasOne('App\Models\AbilityMenu', 'id', 'parent_id')->where('parent_id', '=', 0)->select('id', 'parent_id', 'name');
     }
+    
+    public function childMenu() {
+        return $this->hasMany('App\Models\AbilityMenu', 'parent_id', 'id')->select('id', 'parent_id', 'name');
+    }
 }

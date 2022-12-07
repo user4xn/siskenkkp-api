@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MerkKdrn extends Model
+class Role extends Model
 {
-    protected $table = 'merk_kdrn';
+    protected $table = 'roles';
 
     protected $fillable = [
         'id',
-        'merk',
+        'name'
     ];
 }

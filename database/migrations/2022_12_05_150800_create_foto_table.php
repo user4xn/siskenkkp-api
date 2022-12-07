@@ -19,6 +19,7 @@ class CreateFotoTable extends Migration
             $table->string('urlfoto');
             $table->timestamp('tglupload')->useCurrent();
             $table->string('caption');
+            $table->timestamps();
         });
     }
 

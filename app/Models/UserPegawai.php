@@ -10,7 +10,15 @@ class UserPegawai extends Model
 
     protected $fillable = [
         'id',
+        'userid',
         'nip',
-        'createddate',
     ];
+
+    public function detail() {
+        return $this->hasOne('App\Models\Pegawai', 'nip', 'nip')->with('unitkerja')->with('jabatan');
+    }
+    
+    public function user() {
+        return $this->hasOne('App\Models\User', 'id', 'userid');
+    }
 }

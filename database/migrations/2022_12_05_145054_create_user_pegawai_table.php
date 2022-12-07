@@ -16,8 +16,8 @@ class CreateUserPegawaiTable extends Migration
         Schema::create('user_pegawai', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('userid');
-            $table->bigInteger('nip');
-            $table->timestamp('createddate')->useCurrent();
+            $table->string('nip');
+            $table->timestamps();
         });
     }
 

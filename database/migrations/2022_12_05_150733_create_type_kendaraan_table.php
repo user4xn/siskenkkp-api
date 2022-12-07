@@ -13,9 +13,9 @@ class CreateTypekendaraanTable extends Migration
      */
     public function up()
     {
-        Schema::create('typekendaraan', function (Blueprint $table) {
+        Schema::create('type_kendaraan', function (Blueprint $table) {
             $table->id();
-            $table->string('typekdrn');
+            $table->string('type');
         });
     }
 
@@ -26,6 +26,6 @@ class CreateTypekendaraanTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('typekendaraan');
+        Schema::dropIfExists('type_kendaraan');
     }
 }

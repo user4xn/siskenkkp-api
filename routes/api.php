@@ -3,6 +3,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PegawaiController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -25,7 +26,19 @@ Route::group(['middleware' => 'api','prefix' => 'admin'], function ($router) {
     Route::get('/abilities', [AdminController::class, 'abilities']);
     Route::get('/ability-menu', [AdminController::class, 'abilityMenu']);
     Route::get('/users', [AdminController::class, 'users']);
+    Route::get('/users/{user_id}', [AdminController::class, 'userDetailAbility']);
+    Route::put('/users/update-ability', [AdminController::class, 'userUpdateAbility']);
 });
+
+Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
+    Route::get('/pegawai', [PegawaiController::class, 'pegawai']);
+    Route::get('/pegawai/options/unit-kerja', [PegawaiController::class, 'unitKerja']);
+    Route::get('/pegawai/options/jabatan', [PegawaiController::class, 'jabatan']);
+    Route::post('/pegawai/store', [PegawaiController::class, 'store']);
+    Route::put('/pegawai/update/{id_user_pegawai}', [PegawaiController::class, 'update']);
+});
+
+
 
 Route::get('/unauthorized', function () {
     return response()->json([

@@ -27,16 +27,15 @@ class AuthController extends Controller
         if (! $token = auth()->attempt($validator->validated())) {
             return response()->json([
                 'status' => 'failed',
-                'code' => 401,
-                'message' => 'Unauthorized',
-            ],401);
+                'code' => 400,
+                'message' => 'Invalid email or password',
+            ],400);
         }
         return $this->createNewToken($token);
     }
     
     public function register(Request $request) {
         $validator = Validator::make($request->all(), [
-            'name'  => 'required|string|between:2,100',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|confirmed|min:6',
             'role_id' => 'required|integer',
@@ -45,7 +44,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'failed',
                 'code' => 400,
-                'message' => $validator->errors()->toJson(),
+                'message' => $validator->errors(),
             ],400);
         }
         $user = User::create(array_merge(
@@ -79,6 +78,11 @@ class AuthController extends Controller
   
     public function userProfile() {
         $dataUser = auth()->user();
+        $getUserDetail = User::select('id', 'email', 'role_id')
+            ->where('id', $dataUser->id)
+            ->with('roleDetail')
+            ->with('userPegawai.detail')
+            ->first();
         $getAbility = UserAbility::where('user_id', $dataUser->id)
             ->select('id', 'ability_id', 'ability_menu_id')
             ->with('abilities')
@@ -96,11 +100,16 @@ class AuthController extends Controller
             ];
         }
         $data = [
-            'user_id' => $dataUser->id,
-            'name' => $dataUser->name,
-            'email' => $dataUser->email,
-            'email_verified_at' => $dataUser->email_verified_at,
-            'role_id' => $dataUser->role_id,
+            'id' => $getUserDetail->id,
+            'email' => $getUserDetail->email,
+            'role' => $getUserDetail->roleDetail->name,
+            'nip' => $getUserDetail->userPegawai->nip,
+            'nama' => $getUserDetail->userPegawai->detail->nama,
+            'jk' => $getUserDetail->userPegawai->detail->jk,
+            'alamat' => $getUserDetail->userPegawai->detail->alamat,
+            'unit_kerja' => $getUserDetail->userPegawai->detail->unitKerja->unitkerja,
+            'jabatan' => $getUserDetail->userPegawai->detail->jabatan->namajabatan,
+            'createddate' => $getUserDetail->userPegawai->detail->createddate,
             'abilities' => $abilities,
         ];
         return response()->json([

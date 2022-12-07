@@ -18,11 +18,19 @@ class AuthAdmin extends Middleware
     {
         $user = auth()->user();
 
-        if($user->role_id !=  1){
+        if($user) {
+            if($user->role_id !=  1) {
+                return response()->json([
+                    'status' => 'failed', 
+                    'code' => 401,
+                    'message' => 'Unauthorized.' 
+                ], 401);
+            }
+        } else {
             return response()->json([
                 'status' => 'failed', 
                 'code' => 401,
-                'message' => 'Unauthorized.' 
+                'message' => 'Expired Access.' 
             ], 401);
         }
         

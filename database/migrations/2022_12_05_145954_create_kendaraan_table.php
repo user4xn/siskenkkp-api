@@ -15,7 +15,7 @@ class CreateKendaraanTable extends Migration
     {
         Schema::create('kendaraan', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('idType');
+            $table->bigInteger('idtypekdrn');
             $table->bigInteger('idjeniskdrn');
             $table->string('nobpkb');
             $table->string('nomesin');
@@ -25,9 +25,10 @@ class CreateKendaraanTable extends Migration
             $table->date('tglpajak');
             $table->date('tglmatipajak');
             $table->bigInteger('jaraktempuh');
-            $table->bigInteger('idmerk');
+            $table->bigInteger('idmerkkdrn');
             $table->string('warna');
             $table->string('kondisi');
+            $table->timestamps();
         });
     }
 
