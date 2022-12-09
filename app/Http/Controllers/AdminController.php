@@ -15,7 +15,7 @@ class AdminController extends Controller
         $this->middleware('auth_admin');
     }
    
-    public function abilities(Request $request) {
+    public function abilities (Request $request) {
         return response()->json([
             'status' => 'success',
             'code' => 200,
@@ -23,7 +23,7 @@ class AdminController extends Controller
         ], 200);
     }
 
-    public function abilityMenu(Request $request) {
+    public function abilityMenu (Request $request) {
         $fetch = AbilityMenu::select('id', 'parent_id', 'name')
             ->where('parent_id', 0)
             ->with('childMenu')
@@ -35,7 +35,7 @@ class AdminController extends Controller
         ], 200);
     }
 
-    public function users(Request $request) {
+    public function users (Request $request) {
         $fetch = User::select('id', 'email', 'role_id')
             ->with('roleDetail')
             ->with('userPegawai.detail')
@@ -76,7 +76,7 @@ class AdminController extends Controller
         ], 200);
     }
 
-    public function userDetailAbility(Request $request) {
+    public function userDetailAbility (Request $request) {
         $getUserDetail = User::select('id', 'email', 'role_id')
             ->where('id', $request->user_id)
             ->with('roleDetail')
@@ -148,14 +148,25 @@ class AdminController extends Controller
         }
         DB::beginTransaction();
         try {
+            $fetchAbilityMenu = AbilityMenu::all()->toArray();
             UserAbility::where('user_id', $request->user_id)->delete();
-            $data_abilities = $request->data;
+            $data_abilities = array_unique($request->data, SORT_REGULAR);
             foreach ($data_abilities as $ability) {
-                $userAbility = new UserAbility();
-                $userAbility->user_id = $request->user_id;
-                $userAbility->ability_id = $ability['ability_id'];
-                $userAbility->ability_menu_id = $ability['ability_menu_id'];
-                $userAbility->save();
+                $key = array_column($fetchAbilityMenu, 'id');
+                $index = array_search($ability['ability_menu_id'], $key);
+                if($index !== false) {
+                    $userAbility = new UserAbility();
+                    $userAbility->user_id = $request->user_id;
+                    $userAbility->ability_id = $ability['ability_id'];
+                    $userAbility->ability_menu_id = $ability['ability_menu_id'];
+                    $userAbility->save();
+                }else{
+                    return response()->json([
+                        'status' => 'failed',
+                        'code' => 400,
+                        'message' => 'Invalid Menu id',
+                    ],400);
+                }
             }
             DB::commit();
             return response()->json([
@@ -172,6 +183,5 @@ class AdminController extends Controller
                 'message' => $th->getMessage(),
             ],400);
         }
-
     }
 }

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\KendaraanController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -35,7 +36,18 @@ Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
     Route::get('/pegawai/options/unit-kerja', [PegawaiController::class, 'unitKerja']);
     Route::get('/pegawai/options/jabatan', [PegawaiController::class, 'jabatan']);
     Route::post('/pegawai/store', [PegawaiController::class, 'store']);
-    Route::put('/pegawai/update/{id_user_pegawai}', [PegawaiController::class, 'update']);
+    Route::get('/pegawai/detail/{nip}', [PegawaiController::class, 'detailPegawai']);
+    Route::put('/pegawai/update/{nip}', [PegawaiController::class, 'update']);
+    Route::delete('/pegawai/delete/{user_id}', [PegawaiController::class, 'destroy']);
+
+    Route::get('/kendaraan', [KendaraanController::class, 'kendaraan']);
+    Route::get('/kendaraan/options/merk', [KendaraanController::class, 'merk']);
+    Route::get('/kendaraan/options/jenis', [KendaraanController::class, 'jenis']);
+    Route::get('/kendaraan/options/type', [KendaraanController::class, 'type']);
+    Route::post('/kendaraan/store', [KendaraanController::class, 'store']);
+    Route::get('/kendaraan/detail/{kendaraan_id}', [KendaraanController::class, 'detailKendaraan']);
+    Route::post('/kendaraan/update/{kendaraan_id}', [KendaraanController::class, 'update']);
+    Route::delete('/kendaraan/delete/{kendaraan_id}', [KendaraanController::class, 'destroy']);
 });
 
 

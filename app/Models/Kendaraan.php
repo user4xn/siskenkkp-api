@@ -10,7 +10,7 @@ class Kendaraan extends Model
 
     protected $fillable = [
         'id',
-        'idType',
+        'idtypekdrn',
         'idjeniskdrn',
         'nobpkb',
         'nomesin',
@@ -20,8 +20,24 @@ class Kendaraan extends Model
         'tglpajak',
         'tglmatipajak',
         'jaraktempuh',
-        'idmerk',
+        'idmerkkdrn',
         'warna',
         'kondisi',
     ];
+
+    public function merk() {
+        return $this->hasOne('App\Models\MerkKendaraan', 'id', 'idmerkkdrn');
+    }
+
+    public function jenis() {
+        return $this->hasOne('App\Models\JenisKendaraan', 'id', 'idjeniskdrn');
+    }
+
+    public function type() {
+        return $this->hasOne('App\Models\TypeKendaraan', 'id', 'idtypekdrn');
+    }
+
+    public function foto() {
+        return $this->hasMany('App\Models\Foto', 'idkdrn', 'id')->select('id', 'idkdrn', 'urlfoto', 'tglupload', 'caption');
+    }
 }

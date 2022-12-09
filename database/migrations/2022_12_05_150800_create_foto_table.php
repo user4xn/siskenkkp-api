@@ -18,7 +18,7 @@ class CreateFotoTable extends Migration
             $table->bigInteger('idkdrn');
             $table->string('urlfoto');
             $table->timestamp('tglupload')->useCurrent();
-            $table->string('caption');
+            $table->string('caption')->nullable();
             $table->timestamps();
         });
     }

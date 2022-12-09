@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\UserAbility;
+use App\Models\AbilityMenu;
 use Validator;
 
 class AuthController extends Controller
@@ -77,46 +78,54 @@ class AuthController extends Controller
     }
   
     public function userProfile() {
-        $dataUser = auth()->user();
-        $getUserDetail = User::select('id', 'email', 'role_id')
-            ->where('id', $dataUser->id)
-            ->with('roleDetail')
-            ->with('userPegawai.detail')
-            ->first();
-        $getAbility = UserAbility::where('user_id', $dataUser->id)
-            ->select('id', 'ability_id', 'ability_menu_id')
-            ->with('abilities')
-            ->with('abilityMenu')
-            ->get();
-        $abilities = [];
-        foreach ($getAbility as $ability) {
-            $abilities[] = [
-                'data_id' => $ability->id,
-                'ability_id' => $ability->ability_id,
-                'ability_name' => $ability->abilities->ability_name,
-                'menu_id' => $ability->ability_menu_id,
-                'menu_name' => $ability->abilityMenu->name,
-                'parent_menu' => $ability->abilityMenu->parentMenu->name,
+        try {
+            $dataUser = auth()->user();
+            $getUserDetail = User::select('id', 'email', 'role_id')
+                ->where('id', $dataUser->id)
+                ->with('roleDetail')
+                ->with('userPegawai.detail')
+                ->first();
+            $getAbility = UserAbility::where('user_id', $dataUser->id)
+                ->select('id', 'ability_id', 'ability_menu_id')
+                ->with('abilities')
+                ->with('abilityMenu')
+                ->get();
+            $abilities = [];
+            foreach ($getAbility as $ability) {
+                $abilities[] = [
+                    'data_id' => $ability->id,
+                    'ability_id' => $ability->ability_id,
+                    'ability_name' => $ability->abilities->ability_name,
+                    'menu_id' => $ability->ability_menu_id,
+                    'menu_name' => $ability->abilityMenu->name,
+                    'parent_menu' => $ability->abilityMenu->parentMenu->name,
+                ];
+            }
+            $data = [
+                'id' => $getUserDetail->id,
+                'email' => $getUserDetail->email,
+                'role' => $getUserDetail->roleDetail->name,
+                'nip' => $getUserDetail->userPegawai->nip,
+                'nama' => $getUserDetail->userPegawai->detail->nama,
+                'jk' => $getUserDetail->userPegawai->detail->jk,
+                'alamat' => $getUserDetail->userPegawai->detail->alamat,
+                'unit_kerja' => $getUserDetail->userPegawai->detail->unitKerja->unitkerja,
+                'jabatan' => $getUserDetail->userPegawai->detail->jabatan->namajabatan,
+                'createddate' => $getUserDetail->userPegawai->detail->createddate,
+                'abilities' => $abilities,
             ];
+            return response()->json([
+                'status' => 'success',
+                'code' => 200,
+                'data' => $data,
+            ],200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'data' => $th->getMessage(),
+            ],400);
         }
-        $data = [
-            'id' => $getUserDetail->id,
-            'email' => $getUserDetail->email,
-            'role' => $getUserDetail->roleDetail->name,
-            'nip' => $getUserDetail->userPegawai->nip,
-            'nama' => $getUserDetail->userPegawai->detail->nama,
-            'jk' => $getUserDetail->userPegawai->detail->jk,
-            'alamat' => $getUserDetail->userPegawai->detail->alamat,
-            'unit_kerja' => $getUserDetail->userPegawai->detail->unitKerja->unitkerja,
-            'jabatan' => $getUserDetail->userPegawai->detail->jabatan->namajabatan,
-            'createddate' => $getUserDetail->userPegawai->detail->createddate,
-            'abilities' => $abilities,
-        ];
-        return response()->json([
-            'status' => 'success',
-            'code' => 200,
-            'data' => $data,
-        ],200);
     }
         
     protected function createNewToken($token){
@@ -131,5 +140,18 @@ class AuthController extends Controller
             'code' => 200,
             'data' => $data,
         ],200);
+    }
+
+    public function checkAbility ($menu, $ability) {
+        $dataUser = auth()->user();
+        $getAbilitySU = AbilityMenu::where('name', $menu)->first();
+        $checkAbility = UserAbility::join('abilities', 'ability_id', '=', 'abilities.id')
+            ->where('ability_name', $ability)
+            ->where(['user_id' => $dataUser->id, 'ability_menu_id' => $getAbilitySU->id])
+            ->first();
+        if(!$checkAbility){
+            return false;
+        }
+        return true;
     }
 }

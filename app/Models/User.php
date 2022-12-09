@@ -6,8 +6,13 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Models\User;
+use App\Models\UserAbility;
+use App\Models\UserPegawai;
+use App\Models\Pegawai;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -56,15 +61,30 @@ class User extends Authenticatable implements JWTSubject
      *
      * @return array
      */
-    public function getJWTCustomClaims() {
+    public function getJWTCustomClaims () {
         return [];
     } 
 
-    public function userPegawai() {
+    public function userPegawai () {
         return $this->hasOne('App\Models\UserPegawai', 'userid', 'id');
     }
 
     public function roleDetail() {
         return $this->hasOne('App\Models\Role', 'id' , 'role_id');
+    }
+
+    public function deleteAll ($user_id, $nip) {
+        DB::beginTransaction();
+        try {
+            UserAbility::where('user_id', $user_id)->delete();
+            Pegawai::where('nip', $nip)->delete();
+            UserPegawai::where(['userid' => $user_id, 'nip' => $nip])->delete();
+            User::where('id', $user_id)->delete();
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return false;
+        }
     }
 }
