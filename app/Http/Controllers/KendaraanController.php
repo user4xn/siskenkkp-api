@@ -100,6 +100,8 @@ class KendaraanController extends Controller
             'thnkdrn' => $fetch->thnkdrn,
             'warna' => $fetch->warna,
             'status' => $fetch->status,
+            'kondisi' => $fetch->kondisi,
+            'jaraktempuh' => $fetch->jaraktempuh,
             'tglpajak' => $fetch->tglpajak,
             'tglmatipajak' => $fetch->tglmatipajak,
             'created_at' => date('Y-m-d H:i:s', strtotime($fetch->created_at)),
