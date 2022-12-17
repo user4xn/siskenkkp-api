@@ -60,6 +60,7 @@ class KendaraanController extends Controller
                 'url_foto' => $kendaraan->foto[0]->urlfoto,
                 'nopolisi' => $kendaraan->nopolisi,
                 'warna' => $kendaraan->warna,
+                'status' => $kendaraan->status,
             ];
         }
         return response()->json([
@@ -87,7 +88,7 @@ class KendaraanController extends Controller
             'id' => $fetch->id,
             'idtype' => $fetch->idtypekdrn,
             'type' => $fetch->type->type,
-            'idmerk' => $fetch->idmerkdrn,
+            'idmerk' => $fetch->idmerkkdrn,
             'merk' => $fetch->merk->merk,
             'idjenis' => $fetch->idjeniskdrn,
             'jenis' => $fetch->jenis->jenis,
@@ -98,6 +99,7 @@ class KendaraanController extends Controller
             'norangka' => $fetch->norangka,
             'thnkdrn' => $fetch->thnkdrn,
             'warna' => $fetch->warna,
+            'status' => $fetch->status,
             'tglpajak' => $fetch->tglpajak,
             'tglmatipajak' => $fetch->tglmatipajak,
             'created_at' => date('Y-m-d H:i:s', strtotime($fetch->created_at)),
@@ -147,6 +149,7 @@ class KendaraanController extends Controller
             $kendaraan->jaraktempuh = $request->jaraktempuh;
             $kendaraan->idmerkkdrn = $request->idmerk;
             $kendaraan->warna = $request->warna;
+            $kendaraan->status = $request->status;
             $kendaraan->kondisi = $request->kondisi;
             $kendaraan->save();
 
@@ -231,6 +234,7 @@ class KendaraanController extends Controller
                 'jaraktempuh' => $request->jaraktempuh,
                 'idmerkkdrn' => $request->idmerk,
                 'warna' => $request->warna,
+                'status' => $request->status,
                 'kondisi' => $request->kondisi,
             ]);
             $images = $request->file('foto_insert');

@@ -48,6 +48,13 @@ Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
     Route::get('/kendaraan/detail/{kendaraan_id}', [KendaraanController::class, 'detailKendaraan']);
     Route::post('/kendaraan/update/{kendaraan_id}', [KendaraanController::class, 'update']);
     Route::delete('/kendaraan/delete/{kendaraan_id}', [KendaraanController::class, 'destroy']);
+
+    Route::get('/pinjam-pakai', [PinjamPakaiController::class, 'pinjamPakai']);
+    Route::get('/pinjam-pakai/inventaris', [PinjamPakaiController::class, 'merk']);
+    Route::post('/pinjam-pakai/store', [PinjamPakaiController::class, 'store']);
+    Route::get('/pijam-pakai/detail/{kendaraan_id}', [PinjamPakaiController::class, 'detailKendaraan']);
+    Route::post('/pijam-pakai/update/{kendaraan_id}', [PinjamPakaiController::class, 'update']);
+    Route::delete('/pijam-pakai/delete/{kendaraan_id}', [PinjamPakaiController::class, 'destroy']);
 });
 
 

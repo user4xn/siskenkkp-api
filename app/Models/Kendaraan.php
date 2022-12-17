@@ -22,6 +22,7 @@ class Kendaraan extends Model
         'jaraktempuh',
         'idmerkkdrn',
         'warna',
+        'status',
         'kondisi',
     ];
 
