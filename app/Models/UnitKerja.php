@@ -12,4 +12,6 @@ class UnitKerja extends Model
         'id',
         'unitkerja',
     ];
+
+    public $timestamps = false;
 }

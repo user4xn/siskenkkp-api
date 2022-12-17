@@ -12,4 +12,6 @@ class Jabatan extends Model
         'id',
         'namajabatan',
     ];
+
+    public $timestamps = false;
 }

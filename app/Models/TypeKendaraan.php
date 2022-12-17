@@ -12,4 +12,6 @@ class TypeKendaraan extends Model
         'id',
         'type',
     ];
+
+    public $timestamps = false;
 }

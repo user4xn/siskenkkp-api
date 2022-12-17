@@ -298,22 +298,4 @@ class PegawaiController extends Controller
             ], 200);
         }
     }
-
-    public function unitKerja () {
-        $fetch = UnitKerja::all();
-        return response()->json([
-            'status' => 'success',
-            'code' => 200,
-            'data' => $fetch
-        ], 200);
-    }
-
-    public function jabatan () {
-        $fetch = Jabatan::all();
-        return response()->json([
-            'status' => 'success',
-            'code' => 200,
-            'data' => $fetch
-        ], 200);
-    }
 }

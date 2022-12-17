@@ -12,4 +12,6 @@ class MerkKendaraan extends Model
         'id',
         'merk',
     ];
+
+    public $timestamps = false;
 }

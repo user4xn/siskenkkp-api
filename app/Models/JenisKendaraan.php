@@ -12,4 +12,6 @@ class JenisKendaraan extends Model
         'id',
         'jenis',
     ];
+
+    public $timestamps = false;
 }

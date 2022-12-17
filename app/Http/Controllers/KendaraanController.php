@@ -321,31 +321,4 @@ class KendaraanController extends Controller
             ], 400);
         }
     }
-
-    public function merk () {
-        $fetch = MerkKendaraan::all();
-        return response()->json([
-            'status' => 'success',
-            'code' => 200,
-            'data' => $fetch
-        ], 200);
-    }
-
-    public function type () {
-        $fetch = TypeKendaraan::all();
-        return response()->json([
-            'status' => 'success',
-            'code' => 200,
-            'data' => $fetch
-        ], 200);
-    }
-
-    public function jenis () {
-        $fetch = JenisKendaraan::all();
-        return response()->json([
-            'status' => 'success',
-            'code' => 200,
-            'data' => $fetch
-        ], 200);
-    }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\KendaraanController;
+use App\Http\Controllers\OptionsController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -33,21 +34,32 @@ Route::group(['middleware' => 'api','prefix' => 'admin'], function ($router) {
 
 Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
     Route::get('/pegawai', [PegawaiController::class, 'pegawai']);
-    Route::get('/pegawai/options/unit-kerja', [PegawaiController::class, 'unitKerja']);
-    Route::get('/pegawai/options/jabatan', [PegawaiController::class, 'jabatan']);
     Route::post('/pegawai/store', [PegawaiController::class, 'store']);
     Route::get('/pegawai/detail/{nip}', [PegawaiController::class, 'detailPegawai']);
     Route::put('/pegawai/update/{nip}', [PegawaiController::class, 'update']);
     Route::delete('/pegawai/delete/{user_id}', [PegawaiController::class, 'destroy']);
 
     Route::get('/kendaraan', [KendaraanController::class, 'kendaraan']);
-    Route::get('/kendaraan/options/merk', [KendaraanController::class, 'merk']);
-    Route::get('/kendaraan/options/jenis', [KendaraanController::class, 'jenis']);
-    Route::get('/kendaraan/options/type', [KendaraanController::class, 'type']);
     Route::post('/kendaraan/store', [KendaraanController::class, 'store']);
     Route::get('/kendaraan/detail/{kendaraan_id}', [KendaraanController::class, 'detailKendaraan']);
     Route::post('/kendaraan/update/{kendaraan_id}', [KendaraanController::class, 'update']);
     Route::delete('/kendaraan/delete/{kendaraan_id}', [KendaraanController::class, 'destroy']);
+
+    Route::get('/options/merk', [OptionsController::class, 'dataMerk']);
+    Route::post('/options/merk/store', [OptionsController::class, 'storeMerk']);
+    Route::delete('/options/merk/{id_merk}/delete', [OptionsController::class, 'deleteMerk']);
+    Route::get('/options/jenis', [OptionsController::class, 'dataJenis']);
+    Route::post('/options/jenis/store', [OptionsController::class, 'storeJenis']);
+    Route::delete('/options/jenis/{id_jenis}/delete', [OptionsController::class, 'deleteJenis']);
+    Route::get('/options/type', [OptionsController::class, 'dataType']);
+    Route::post('/options/type/store', [OptionsController::class, 'storeType']);
+    Route::delete('/options/type/{id_type}/delete', [OptionsController::class, 'deleteType']);
+    Route::get('/options/unit-kerja', [OptionsController::class, 'dataUnitKerja']);
+    Route::post('/options/unit-kerja/store', [OptionsController::class, 'storeUnitKerja']);
+    Route::delete('/options/unit-kerja/{id_unitkerja}/delete', [OptionsController::class, 'deleteUnitKerja']);
+    Route::get('/options/jabatan', [OptionsController::class, 'dataJabatan']);
+    Route::post('/options/jabatan/store', [OptionsController::class, 'storeJabatan']);
+    Route::delete('/options/jabatan/{id_jabatan}/delete', [OptionsController::class, 'deleteJabatan']);
 
     Route::get('/pinjam-pakai', [PinjamPakaiController::class, 'pinjamPakai']);
     Route::get('/pinjam-pakai/inventaris', [PinjamPakaiController::class, 'merk']);
