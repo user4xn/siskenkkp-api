@@ -151,7 +151,6 @@ class KendaraanController extends Controller
             $kendaraan->jaraktempuh = $request->jaraktempuh;
             $kendaraan->idmerkkdrn = $request->idmerk;
             $kendaraan->warna = $request->warna;
-            $kendaraan->status = $request->status;
             $kendaraan->kondisi = $request->kondisi;
             $kendaraan->save();
 
