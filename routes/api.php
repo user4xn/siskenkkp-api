@@ -25,8 +25,6 @@ Route::group(['middleware' => 'api','prefix' => 'auth'], function ($router) {
 });
 
 Route::group(['middleware' => 'api','prefix' => 'admin'], function ($router) {
-    Route::get('/abilities', [AdminController::class, 'abilities']);
-    Route::get('/ability-menu', [AdminController::class, 'abilityMenu']);
     Route::get('/users', [AdminController::class, 'users']);
     Route::get('/users/{user_id}', [AdminController::class, 'userDetailAbility']);
     Route::put('/users/update-ability', [AdminController::class, 'userUpdateAbility']);
@@ -45,6 +43,8 @@ Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
     Route::post('/kendaraan/update/{kendaraan_id}', [KendaraanController::class, 'update']);
     Route::delete('/kendaraan/delete/{kendaraan_id}', [KendaraanController::class, 'destroy']);
 
+    Route::get('/options/abilities', [OptionsController::class, 'dataAbilities']);
+    Route::get('/options/ability-menu', [OptionsController::class, 'dataAbilityMenu']);
     Route::get('/options/merk', [OptionsController::class, 'dataMerk']);
     Route::post('/options/merk/store', [OptionsController::class, 'storeMerk']);
     Route::delete('/options/merk/{id_merk}/delete', [OptionsController::class, 'deleteMerk']);

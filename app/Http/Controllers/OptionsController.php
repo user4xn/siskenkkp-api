@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Abilities;
+use App\Models\AbilityMenu;
 use App\Models\MerkKendaraan;
 use App\Models\JenisKendaraan;
 use App\Models\TypeKendaraan;
@@ -13,6 +15,26 @@ use Validator;
 
 class OptionsController extends Controller
 {
+    public function dataAbilities (Request $request) {
+        return response()->json([
+            'status' => 'success',
+            'code' => 200,
+            'data' => Abilities::all()
+        ], 200);
+    }
+
+    public function dataAbilityMenu (Request $request) {
+        $fetch = AbilityMenu::select('id', 'parent_id', 'name')
+            ->where('parent_id', 0)
+            ->with('childMenu')
+            ->get();
+        return response()->json([
+            'status' => 'success',
+            'code' => 200,
+            'data' => $fetch
+        ], 200);
+    }
+
     public function dataMerk () {
         $fetch = MerkKendaraan::all();
         return response()->json([

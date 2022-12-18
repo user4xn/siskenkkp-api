@@ -14,26 +14,6 @@ class AdminController extends Controller
     public function __construct() {
         $this->middleware('auth_admin');
     }
-   
-    public function abilities (Request $request) {
-        return response()->json([
-            'status' => 'success',
-            'code' => 200,
-            'data' => Abilities::all()
-        ], 200);
-    }
-
-    public function abilityMenu (Request $request) {
-        $fetch = AbilityMenu::select('id', 'parent_id', 'name')
-            ->where('parent_id', 0)
-            ->with('childMenu')
-            ->get();
-        return response()->json([
-            'status' => 'success',
-            'code' => 200,
-            'data' => $fetch
-        ], 200);
-    }
 
     public function users (Request $request) {
         $fetch = User::select('id', 'email', 'role_id')
