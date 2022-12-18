@@ -16,4 +16,10 @@ class DetailPinjam extends Model
         'kmsebelum',
         'remark',
     ];
+
+    public $timestamps = false;
+
+    public function detailKendaraan () {
+        return $this->hasOne('App\Models\Kendaraan', 'id', 'idkdrn')->with('merk')->with('type')->with('jenis')->with('foto');
+    }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\KendaraanController;
 use App\Http\Controllers\OptionsController;
+use App\Http\Controllers\PinjamPakaiController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -61,17 +62,14 @@ Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
     Route::post('/options/jabatan/store', [OptionsController::class, 'storeJabatan']);
     Route::delete('/options/jabatan/{id_jabatan}/delete', [OptionsController::class, 'deleteJabatan']);
 
-    Route::get('/pinjam-pakai', [PinjamPakaiController::class, 'pinjamPakai']);
-    Route::get('/pinjam-pakai/inventaris', [PinjamPakaiController::class, 'merk']);
-    Route::post('/pinjam-pakai/store', [PinjamPakaiController::class, 'store']);
-    Route::get('/pijam-pakai/detail/{kendaraan_id}', [PinjamPakaiController::class, 'detailKendaraan']);
-    Route::post('/pijam-pakai/update/{kendaraan_id}', [PinjamPakaiController::class, 'update']);
-    Route::delete('/pijam-pakai/delete/{kendaraan_id}', [PinjamPakaiController::class, 'destroy']);
+    Route::get('/pinjam-pakai', [PinjamPakaiController::class, 'pinjaman']);
+    Route::get('/pinjam-pakai/detail/{id_pinjaman}', [PinjamPakaiController::class, 'detailPinjaman']);
+    Route::get('/pinjam-pakai/cari', [PinjamPakaiController::class, 'cariPinjaman']);
+    Route::post('/pinjam-pakai/pinjaman/store', [PinjamPakaiController::class, 'storePinjaman']);
+    Route::post('/pinjam-pakai/pengembalian/store', [PinjamPakaiController::class, 'storePengembalian']);
 });
 
-
-
-Route::get('/unauthorized', function () {
+Route::any('/unauthorized', function () {
     return response()->json([
         'status' => 'failed', 
         'code' => 401,

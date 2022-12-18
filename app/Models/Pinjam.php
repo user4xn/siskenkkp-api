@@ -13,4 +13,12 @@ class Pinjam extends Model
         'nip',
         'tglpinjam',
     ];
+
+    public function detailPinjaman () {
+        return $this->hasMany('App\Models\DetailPinjam', 'idpinjam', 'id');
+    }
+
+    public function detailPengembalian () {
+        return $this->hasMany('App\Models\DetailPengembalian', 'idpinjam', 'id');
+    }
 }

@@ -15,6 +15,10 @@ use Validator;
 
 class OptionsController extends Controller
 {
+    public function __construct() {
+        $this->middleware('auth:api');
+    }
+    
     public function dataAbilities (Request $request) {
         return response()->json([
             'status' => 'success',

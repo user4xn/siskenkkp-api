@@ -127,7 +127,7 @@ class KendaraanController extends Controller
             'idmerk' => 'required|integer|exists:merk_kendaraan,id',
             'warna' => 'required',
             'foto' => 'array',
-            'foto.*' => 'mimes:jpg,jpeg,png,svg,webp|max:20480'
+            'foto.*' => 'mimes:jpg,jpeg,png,svg,webp|max:10240'
         ]);
         if($validator->fails()){
             return response()->json([
@@ -203,7 +203,7 @@ class KendaraanController extends Controller
             'tglmatipajak' => 'required|date',
             'idmerk' => 'required|integer|exists:merk_kendaraan,id',
             'foto_insert' => 'array',
-            'foto_insert.*' => 'mimes:jpg,jpeg,png,svg,webp|max:20480'
+            'foto_insert.*' => 'mimes:jpg,jpeg,png,svg,webp|max:10240'
         ]);
         if($validator->fails()){
             return response()->json([
