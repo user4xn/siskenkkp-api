@@ -288,15 +288,33 @@ class PegawaiController extends Controller
     }
 
     public function destroy (Request $request) {
-        $userPegawai = UserPegawai::select('userid', 'nip')->where('userid', $request->user_id)->first();
-        $user = new User();
-        $deletePegawai = $user->deleteAll($request->user_id, $userPegawai->nip);
-        if($deletePegawai){
+        DB::beginTransaction();
+        try {
+            $userPegawai = UserPegawai::select('userid', 'nip')->where('userid', $request->user_id)->first();
+            if($userPegawai == null) {
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Invalid User ID',
+                ], 400);
+            }
+            $user = new User();
+            $deletePegawai = $user->deleteAll($request->user_id, $userPegawai->nip);
+            if($deletePegawai){
+                DB::commit();
+                return response()->json([
+                    'status' => 'success',
+                    'code' => 200,
+                    'message' => 'Sucessfully delete',
+                ], 200);
+            }
+        } catch (\Throwable $th) {
+            DB::rollback();
             return response()->json([
-                'status' => 'success',
-                'code' => 200,
-                'message' => 'Sucessfully delete',
-            ], 200);
+                'status' => 'failed',
+                'code' => 400,
+                'message' => $th->getMessage(),
+            ], 400);
         }
     }
 }
