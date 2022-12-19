@@ -289,7 +289,8 @@ class PegawaiController extends Controller
 
     public function destroy (Request $request) {
         $userPegawai = UserPegawai::select('userid', 'nip')->where('userid', $request->user_id)->first();
-        $deletePegawai = User::deleteAll($request->user_id, $userPegawai->nip);
+        $user = new User();
+        $deletePegawai = $user->deleteAll($request->user_id, $userPegawai->nip);
         if($deletePegawai){
             return response()->json([
                 'status' => 'success',
