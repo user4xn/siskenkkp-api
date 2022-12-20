@@ -248,6 +248,13 @@ class PinjamPakaiController extends Controller
             ->select('id', 'nip', 'tglpinjam')
             ->where('id', $request->id_pinjaman)
             ->first();
+        if($fetch == null) {
+            return response()->json([
+                'status' => 'success',
+                'code' => 400,
+                'message' => 'Invalid id pinjam',
+            ], 400);
+        }
         $total_pijaman = count($fetch->detailPinjaman);
         $total_pengembalian = count($fetch->detailPengembalian);
         foreach ($fetch->detailPinjaman as $dpj){
