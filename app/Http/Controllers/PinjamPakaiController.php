@@ -49,6 +49,7 @@ class PinjamPakaiController extends Controller
         foreach ($fetch as $pinjam) {
             $total_pijaman = count($pinjam->detailPinjaman);
             $total_pengembalian = count($pinjam->detailPengembalian);
+            $detailPinjam = [];
             foreach ($pinjam->detailPinjaman as $dpj){
                 $detailPinjam[] = [
                     'detail_pinjam_id' => $dpj->id,
@@ -62,6 +63,7 @@ class PinjamPakaiController extends Controller
                     'urlfoto' => $dpj->kendaraan->foto[0]->urlfoto,
                 ];
             }
+            $detailKembali = [];
             foreach ($pinjam->detailPengembalian as $dpb){
                 $detailKembali[] = [
                     'detail_pinjam_id' => $dpb->id,
