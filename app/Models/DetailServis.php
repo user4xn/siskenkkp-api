@@ -14,4 +14,10 @@ class DetailServis extends Model
         'idjenisservis',
         'description',
     ];
+
+    public $timestamps = false;
+
+    public function detailJenis () {
+        return $this->hasOne('App\Models\JenisServis', 'id', 'idjenisservis');
+    }
 }

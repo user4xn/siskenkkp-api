@@ -12,4 +12,6 @@ class JenisServis extends Model
         'id',
         'description',
     ];
+
+    public $timestamps = false;
 }

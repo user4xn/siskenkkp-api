@@ -15,4 +15,8 @@ class Servis extends Model
         'jaraktempuh',
         'nmbengkel',
     ];
+
+    public function detailServis () {
+        return $this->hasMany('App\Models\DetailServis', 'idservis', 'id');
+    }
 }

@@ -11,6 +11,7 @@ use App\Models\JenisKendaraan;
 use App\Models\TypeKendaraan;
 use App\Models\UnitKerja;
 use App\Models\Jabatan;
+use App\Models\JenisServis;
 use Validator;
 
 class OptionsController extends Controller
@@ -333,6 +334,68 @@ class OptionsController extends Controller
         DB::beginTransaction();
         try {
             $delete = Jabatan::where('id', $request->id_jabatan)->delete();
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'code' => 200,
+                'message' => 'Deleted Successfully',
+            ], 200);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => $th->getMessage(),
+            ], 400);
+        }
+    }
+
+    public function dataJenisServis () {
+        $fetch = JenisServis::all();
+        return response()->json([
+            'status' => 'success',
+            'code' => 200,
+            'data' => $fetch
+        ], 200);
+    }
+
+    public function storeJenisServis (Request $request) {
+        $validator = Validator::make($request->all(), [
+            'description' => 'required|string',
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => $validator->errors(),
+            ],400);
+        }
+        DB::beginTransaction();
+        try {
+            $store = new JenisServis();
+            $store->description = $request->description;
+            $store->save();
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'code' => 200,
+                'message' => 'Stored Successfully',
+                'data' => $store
+            ], 200);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => $th->getMessage(),
+            ], 400);
+        }
+    }
+
+    public function deleteJenisServis (Request $request) {
+        DB::beginTransaction();
+        try {
+            $delete = JenisServis::where('id', $request->id_jenis_servis)->delete();
             DB::commit();
             return response()->json([
                 'status' => 'success',
