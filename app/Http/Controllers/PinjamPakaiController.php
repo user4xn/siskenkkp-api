@@ -257,6 +257,7 @@ class PinjamPakaiController extends Controller
         }
         $total_pijaman = count($fetch->detailPinjaman);
         $total_pengembalian = count($fetch->detailPengembalian);
+        $detailPinjam = [];
         foreach ($fetch->detailPinjaman as $dpj){
             $checkPengembalian = DetailPengembalian::where(['idpinjam' => $request->id_pinjaman, 'idkdrn' => $dpj->detailKendaraan->id])->count();
             $detailPinjam[] = [
@@ -281,6 +282,7 @@ class PinjamPakaiController extends Controller
                 'foto_peminjaman' => $dpj->fotoPinjam,  
             ];
         }
+        $detailKembali = [];
         foreach ($fetch->detailPengembalian as $dpb){
             $detailKembali[] = [
                 'detail_pinjam_id' => $dpb->id,
