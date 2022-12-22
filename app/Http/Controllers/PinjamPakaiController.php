@@ -51,6 +51,9 @@ class PinjamPakaiController extends Controller
             $total_pengembalian = count($pinjam->detailPengembalian);
             $detailPinjam = [];
             foreach ($pinjam->detailPinjaman as $dpj){
+                $jenis_dpj = $dpj->kendaraan->jenis ? $dpj->kendaraan->jenis->jenis : '{jenis}';
+                $merk_dpj = $dpj->kendaraan->merk ? $dpj->kendaraan->merk->merk : '{merk}';
+                $type_dpj = $dpj->kendaraan->type ? $dpj->kendaraan->type->type : '{type}';
                 $detailPinjam[] = [
                     'detail_pinjam_id' => $dpj->id,
                     'tgl_pinjam' => $dpj->tglpinjam,
@@ -58,13 +61,16 @@ class PinjamPakaiController extends Controller
                     'remark' => $dpj->remark,
                     'id_kendaraan' => $dpj->kendaraan->id,
                     'nopolisi' => $dpj->kendaraan->nopolisi,
-                    'label' => $dpj->kendaraan->jenis->jenis.' '.$dpj->kendaraan->merk->merk.' '.$dpj->kendaraan->type->type,
+                    'label' => $jenis_dpj.' '.$merk_dpj.' '.$type_dpj,
                     'warna' => $dpj->kendaraan->warna,
                     'urlfoto' => $dpj->kendaraan->foto[0]->urlfoto,
                 ];
             }
             $detailKembali = [];
             foreach ($pinjam->detailPengembalian as $dpb){
+                $jenis_dpb = $dpb->kendaraan->jenis ? $dpb->kendaraan->jenis->jenis : '{jenis}';
+                $merk_dpb = $dpb->kendaraan->merk ? $dpb->kendaraan->merk->merk : '{merk}';
+                $type_dpb = $dpb->kendaraan->type ? $dpb->kendaraan->type->type : '{type}';
                 $detailKembali[] = [
                     'detail_pinjam_id' => $dpb->id,
                     'tgl_kembali' => $dpb->tglkembali,
@@ -72,7 +78,7 @@ class PinjamPakaiController extends Controller
                     'remark' => $dpb->remark,
                     'id_kendaraan' => $dpb->kendaraan->id,
                     'nopolisi' => $dpb->kendaraan->nopolisi,
-                    'label' => $dpb->kendaraan->jenis->jenis.' '.$dpb->kendaraan->merk->merk.' '.$dpb->kendaraan->type->type,
+                    'label' => $jenis_dpb.' '.$merk_dpb.' '.$type_dpb,
                     'warna' => $dpb->kendaraan->warna,
                     'urlfoto' => $dpb->kendaraan->foto[0]->urlfoto,
                 ];
@@ -276,9 +282,9 @@ class PinjamPakaiController extends Controller
                 'thnkdrn' => $dpj->detailKendaraan->thnkdrn,
                 'tglpajak' => $dpj->detailKendaraan->tglpajak,
                 'tglmatipajak' => $dpj->detailKendaraan->tglmatipajak,
-                'merk' => $dpj->detailKendaraan->merk->merk,
-                'jenis' => $dpj->detailKendaraan->jenis->jenis,
-                'type' => $dpj->detailKendaraan->type->type,
+                'merk' => $dpj->detailKendaraan->merk ? $dpj->detailKendaraan->merk->merk : false,
+                'jenis' => $dpj->detailKendaraan->jenis ? $dpj->detailKendaraan->jenis->jenis : false,
+                'type' => $dpj->detailKendaraan->type ? $dpj->detailKendaraan->type->type : false,
                 'warna' => $dpj->detailKendaraan->warna,
                 'foto_kendaraan' => $dpj->detailKendaraan->foto,
                 'foto_peminjaman' => $dpj->fotoPinjam,  
@@ -299,9 +305,9 @@ class PinjamPakaiController extends Controller
                 'thnkdrn' => $dpb->detailKendaraan->thnkdrn,
                 'tglpajak' => $dpb->detailKendaraan->tglpajak,
                 'tglmatipajak' => $dpb->detailKendaraan->tglmatipajak,
-                'merk' => $dpb->detailKendaraan->merk->merk,
-                'jenis' => $dpb->detailKendaraan->jenis->jenis,
-                'type' => $dpb->detailKendaraan->type->type,
+                'merk' => $dpb->detailKendaraan->merk ? $dpb->detailKendaraan->merk->merk : false,
+                'jenis' => $dpb->detailKendaraan->jenis ? $dpb->detailKendaraan->jenis->jenis : false,
+                'type' => $dpb->detailKendaraan->type ? $dpb->detailKendaraan->type->type : false,
                 'warna' => $dpb->detailKendaraan->warna,
                 'foto_kendaraan' => $dpb->detailKendaraan->foto,
                 'foto_peminjaman' => $dpb->fotoPinjam,  

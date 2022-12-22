@@ -63,8 +63,8 @@ class PegawaiController extends Controller
                 'email' => $pegawai->userPegawai->user->email,
                 'jk' => $pegawai->jk,
                 'alamat' => $pegawai->alamat,
-                'unit_kerja' => $pegawai->unitkerja->unitkerja,
-                'jabatan' => $pegawai->jabatan->namajabatan,
+                'unit_kerja' => $pegawai->unitkerja ? $pegawai->unitkerja->unitkerja : false,
+                'jabatan' => $pegawai->jabatan ? $pegawai->jabatan->namajabatan : false,
             ];
         }
         return response()->json([
@@ -111,8 +111,8 @@ class PegawaiController extends Controller
             'email' => $fetch->userPegawai->user->email,
             'jk' => $fetch->jk,
             'alamat' => $fetch->alamat,
-            'unit_kerja' => $fetch->unitkerja->unitkerja,
-            'jabatan' => $fetch->jabatan->namajabatan,
+            'unit_kerja' => $fetch->unitkerja ? $fetch->unitkerja->unitkerja : false,
+            'jabatan' => $fetch->jabatan ? $fetch->jabatan->namajabatan : false,
             'abilities' => $abilities
         ];
         return response()->json([
