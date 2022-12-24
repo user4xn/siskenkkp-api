@@ -30,6 +30,10 @@ Route::group(['middleware' => 'api','prefix' => 'admin'], function ($router) {
     Route::get('/users', [AdminController::class, 'users']);
     Route::get('/users/{user_id}', [AdminController::class, 'userDetailAbility']);
     Route::put('/users/update-ability', [AdminController::class, 'userUpdateAbility']);
+    Route::get('/pinjam-pakai', [AdminController::class, 'pinjaman']);
+    Route::get('/pinjam-pakai/detail/{id_pinjaman}', [AdminController::class, 'detailPinjaman']);
+    Route::post('/pinjam-pakai/pinjaman/store', [AdminController::class, 'storePinjaman']);
+    Route::post('/pinjam-pakai/pengembalian/store', [AdminController::class, 'storePengembalian']);
 });
 
 Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {

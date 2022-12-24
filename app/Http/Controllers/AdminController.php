@@ -7,6 +7,8 @@ use App\Models\Abilities;
 use App\Models\AbilityMenu;
 use App\Models\User;
 use App\Models\UserAbility;
+use App\Models\Pinjam;
+use App\Http\Controllers\PinjamPakaiController;
 use Validator;
 
 class AdminController extends Controller
@@ -39,7 +41,7 @@ class AdminController extends Controller
                     'alamat' => $user->userPegawai->detail->alamat,
                     'unit_kerja' => $user->userPegawai->detail->unitKerja->unitkerja,
                     'jabatan' => $user->userPegawai->detail->jabatan->namajabatan,
-                    'createddate' => $user->userPegawai->detail->createddate,
+                    'created_at' => $user->userPegawai->detail->created_at,
                 ];
             }else{
                 $data[] = [
@@ -74,16 +76,51 @@ class AdminController extends Controller
             ->with('abilities')
             ->with('abilityMenu')
             ->get();
-        $abilities = [];
+            $getParent = AbilityMenu::where('parent_id', 0)
+            ->select('id', 'name')
+            ->get()
+            ->toArray();
+        $menus = [];
         foreach ($getAbility as $ability) {
-            $abilities[] = [
-                'data_id' => $ability->id,
-                'ability_id' => $ability->ability_id,
-                'ability_name' => $ability->abilities->ability_name,
-                'menu_id' => $ability->ability_menu_id,
-                'menu_name' => $ability->abilityMenu->name,
-                'parent_menu' => $ability->abilityMenu->parentMenu->name,
-            ];
+            $keys = array_column($menus, 'menu_id');
+            $index = array_search($ability->ability_menu_id, $keys);
+            if($index !== false) {
+                $menus[$index] = [
+                    'parent_id' => $ability->abilityMenu->parentMenu->id,
+                    'menu_id' => $ability->ability_menu_id,
+                    'menu_name' => $ability->abilityMenu->name,
+                ];
+            }else{
+                $menus[] = [
+                    'parent_id' => $ability->abilityMenu->parentMenu->id,
+                    'menu_id' => $ability->ability_menu_id,
+                    'menu_name' => $ability->abilityMenu->name,
+                ];
+            }
+        }
+        foreach ($getAbility as $abs) {
+            $keys = array_column($menus, 'menu_id');
+            $index = array_search($abs->ability_menu_id, $keys);
+            if($index !== false) {
+                $menus[$index]['abilities'][] = [
+                    'data_id' => $abs->id,
+                    'ability_id' => $abs->ability_id,
+                    'ability_name' => $abs->abilities->ability_name,
+                ];
+            }
+        }
+        foreach ($menus as $menu) {
+            $keys = array_column($getParent, 'id');
+            $index = array_search($menu['parent_id'], $keys);
+            if($index !== false) {
+                $getParent[$index]['child_menu'][] = $menu;
+            }
+        }
+        $abilities = [];
+        foreach ($getParent as $each) {
+            if (isset($each['child_menu'])) {
+                $abilities[] = $each;
+            };
         }
         if($getUserDetail->userPegawai) {
             $data[] = [
@@ -96,7 +133,7 @@ class AdminController extends Controller
                 'alamat' => $getUserDetail->userPegawai->detail->alamat,
                 'unit_kerja' => $getUserDetail->userPegawai->detail->unitKerja->unitkerja,
                 'jabatan' => $getUserDetail->userPegawai->detail->jabatan->namajabatan,
-                'createddate' => $getUserDetail->userPegawai->detail->createddate,
+                'created_at' => $getUserDetail->userPegawai->detail->created_at,
                 'abilities' => $abilities,
             ];
         } else {
@@ -163,5 +200,95 @@ class AdminController extends Controller
                 'message' => $th->getMessage(),
             ],400);
         }
+    }
+
+    public function pinjaman (Request $request) {
+        $validator = Validator::make($request->all(), [
+            'start_date' => 'date',
+            'end_date' => 'date',
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => $validator->errors(),
+            ],400);
+        }
+        $fetch = Pinjam::with(['detailPinjaman.kendaraan'])
+            ->with('detailPengembalian.kendaraan')
+            ->select('id', 'nip', 'tglpinjam')
+            ->when($request->start_date && $request->end_date, function ($query) use ($request){
+                return $query->whereBetween('tglpinjam', [$request->start_date, $request->end_date]);
+            })
+            ->get();
+        $data = [];
+        foreach ($fetch as $pinjam) {
+            $total_pijaman = count($pinjam->detailPinjaman);
+            $total_pengembalian = count($pinjam->detailPengembalian);
+            $detailPinjam = [];
+            foreach ($pinjam->detailPinjaman as $dpj){
+                $jenis_dpj = $dpj->kendaraan->jenis ? $dpj->kendaraan->jenis->jenis : '{jenis}';
+                $merk_dpj = $dpj->kendaraan->merk ? $dpj->kendaraan->merk->merk : '{merk}';
+                $type_dpj = $dpj->kendaraan->type ? $dpj->kendaraan->type->type : '{type}';
+                $detailPinjam[] = [
+                    'detail_pinjam_id' => $dpj->id,
+                    'tgl_pinjam' => $dpj->tglpinjam,
+                    'kmsebelum' => $dpj->kmsebelum,
+                    'remark' => $dpj->remark,
+                    'id_kendaraan' => $dpj->kendaraan->id,
+                    'nopolisi' => $dpj->kendaraan->nopolisi,
+                    'label' => $jenis_dpj.' '.$merk_dpj.' '.$type_dpj,
+                    'warna' => $dpj->kendaraan->warna,
+                    'urlfoto' => $dpj->kendaraan->foto[0]->urlfoto,
+                ];
+            }
+            $detailKembali = [];
+            foreach ($pinjam->detailPengembalian as $dpb){
+                $jenis_dpb = $dpb->kendaraan->jenis ? $dpb->kendaraan->jenis->jenis : '{jenis}';
+                $merk_dpb = $dpb->kendaraan->merk ? $dpb->kendaraan->merk->merk : '{merk}';
+                $type_dpb = $dpb->kendaraan->type ? $dpb->kendaraan->type->type : '{type}';
+                $detailKembali[] = [
+                    'detail_pinjam_id' => $dpb->id,
+                    'tgl_kembali' => $dpb->tglkembali,
+                    'kmsesudah' => $dpb->kmsesudah,
+                    'remark' => $dpb->remark,
+                    'id_kendaraan' => $dpb->kendaraan->id,
+                    'nopolisi' => $dpb->kendaraan->nopolisi,
+                    'label' => $jenis_dpb.' '.$merk_dpb.' '.$type_dpb,
+                    'warna' => $dpb->kendaraan->warna,
+                    'urlfoto' => $dpb->kendaraan->foto[0]->urlfoto,
+                ];
+            }
+            $data[] = [
+                'id_pinjam' => $pinjam->id,
+                'nip' => $pinjam->nip,
+                'tgl_pinjam' => $pinjam->tglpinjam,
+                'total_pinjam' => $total_pijaman,
+                'status_pinjaman' => $total_pengembalian == $total_pijaman ? 'Selesai' : 'Belum Selesai',
+                'total_dikembalikan' => $total_pengembalian,
+                'detail_pinjaman' => $detailPinjam,
+                'detail_pengembalian' => $detailKembali,
+            ];
+        }
+        return response()->json([
+            'status' => 'success',
+            'code' => 200,
+            'data' => $data,
+        ], 200);
+    }
+
+    public function storePinjaman (Request $request) {
+        $PinjamPakaiController = new PinjamPakaiController();
+        return $PinjamPakaiController->storePinjam($request);
+    }
+
+    public function storePengembalian (Request $request) {
+        $PinjamPakaiController = new PinjamPakaiController();
+        return $PinjamPakaiController->storePengembalian($request);
+    }
+
+    public function detailPinjaman (Request $request) {
+        $PinjamPakaiController = new PinjamPakaiController();
+        return $PinjamPakaiController->detailPinjaman($request);
     }
 }
