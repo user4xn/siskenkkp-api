@@ -12,6 +12,9 @@ use App\Models\TypeKendaraan;
 use App\Models\UnitKerja;
 use App\Models\Jabatan;
 use App\Models\JenisServis;
+use App\Models\Kendaraan;
+use App\Models\Pegawai;
+use App\Models\DetailServis;
 use Validator;
 
 class OptionsController extends Controller
@@ -85,6 +88,14 @@ class OptionsController extends Controller
     public function deleteMerk (Request $request) {
         DB::beginTransaction();
         try {
+            $check = Kendaraan::where('idmerkkdrn', $request->id_merk)->count();
+            if($check > 0){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Failed, Data Used',
+                ], 400); 
+            }
             $delete = MerkKendaraan::where('id', $request->id_merk)->delete();
             DB::commit();
             return response()->json([
@@ -147,6 +158,14 @@ class OptionsController extends Controller
     public function deleteType (Request $request) {
         DB::beginTransaction();
         try {
+            $check = Kendaraan::where('idtypekdrn', $request->id_type)->count();
+            if($check > 0){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Failed, Data Used',
+                ], 400); 
+            }
             $delete = TypeKendaraan::where('id', $request->id_type)->delete();
             DB::commit();
             return response()->json([
@@ -209,6 +228,14 @@ class OptionsController extends Controller
     public function deleteJenis (Request $request) {
         DB::beginTransaction();
         try {
+            $check = Kendaraan::where('idjeniskdrn', $request->id_jenis)->count();
+            if($check > 0){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Failed, Data Used',
+                ], 400); 
+            }
             $delete = JenisKendaraan::where('id', $request->id_jenis)->delete();
             DB::commit();
             return response()->json([
@@ -271,6 +298,14 @@ class OptionsController extends Controller
     public function deleteUnitKerja (Request $request) {
         DB::beginTransaction();
         try {
+            $check = Pegawai::where('idbiro', $request->id_unitkerja)->count();
+            if($check > 0){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Failed, Data Used',
+                ], 400); 
+            }
             $delete = UnitKerja::where('id', $request->id_unitkerja)->delete();
             DB::commit();
             return response()->json([
@@ -333,6 +368,14 @@ class OptionsController extends Controller
     public function deleteJabatan (Request $request) {
         DB::beginTransaction();
         try {
+            $check = Pegawai::where('idjabatan', $request->id_jabatan)->count();
+            if($check > 0){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Failed, Data Used',
+                ], 400); 
+            }
             $delete = Jabatan::where('id', $request->id_jabatan)->delete();
             DB::commit();
             return response()->json([
@@ -395,6 +438,14 @@ class OptionsController extends Controller
     public function deleteJenisServis (Request $request) {
         DB::beginTransaction();
         try {
+            $check = DetailServis::where('idjenisservis', $request->id_jenis_servis)->count();
+            if($check > 0){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Failed, Data Used',
+                ], 400); 
+            }
             $delete = JenisServis::where('id', $request->id_jenis_servis)->delete();
             DB::commit();
             return response()->json([

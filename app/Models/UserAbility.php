@@ -22,6 +22,6 @@ class UserAbility extends Model
     }
 
     public function abilityMenu() {
-        return $this->hasOne('App\Models\AbilityMenu', 'id', 'ability_menu_id')->with('parentMenu')->select('id', 'parent_id', 'name');
+        return $this->hasOne('App\Models\AbilityMenu', 'id', 'ability_menu_id');
     }
 }

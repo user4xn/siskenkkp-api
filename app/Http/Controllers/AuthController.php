@@ -90,16 +90,51 @@ class AuthController extends Controller
                 ->with('abilities')
                 ->with('abilityMenu')
                 ->get();
-            $abilities = [];
+            $getParent = AbilityMenu::where('parent_id', 0)
+                ->select('id', 'name')
+                ->get()
+                ->toArray();
+            $menus = [];
             foreach ($getAbility as $ability) {
-                $abilities[] = [
-                    'data_id' => $ability->id,
-                    'ability_id' => $ability->ability_id,
-                    'ability_name' => $ability->abilities->ability_name,
-                    'menu_id' => $ability->ability_menu_id,
-                    'menu_name' => $ability->abilityMenu->name,
-                    'parent_menu' => $ability->abilityMenu->parentMenu->name,
-                ];
+                $keys = array_column($menus, 'menu_id');
+                $index = array_search($ability->ability_menu_id, $keys);
+                if($index !== false) {
+                    $menus[$index] = [
+                        'parent_id' => $ability->abilityMenu->parentMenu->id,
+                        'menu_id' => $ability->ability_menu_id,
+                        'menu_name' => $ability->abilityMenu->name,
+                    ];
+                }else{
+                    $menus[] = [
+                        'parent_id' => $ability->abilityMenu->parentMenu->id,
+                        'menu_id' => $ability->ability_menu_id,
+                        'menu_name' => $ability->abilityMenu->name,
+                    ];
+                }
+            }
+            foreach ($getAbility as $abs) {
+                $keys = array_column($menus, 'menu_id');
+                $index = array_search($abs->ability_menu_id, $keys);
+                if($index !== false) {
+                    $menus[$index]['abilities'][] = [
+                        'data_id' => $abs->id,
+                        'ability_id' => $abs->ability_id,
+                        'ability_name' => $abs->abilities->ability_name,
+                    ];
+                }
+            }
+            foreach ($menus as $menu) {
+                $keys = array_column($getParent, 'id');
+                $index = array_search($menu['parent_id'], $keys);
+                if($index !== false) {
+                    $getParent[$index]['child_menu'][] = $menu;
+                }
+            }
+            $abilities = [];
+            foreach ($getParent as $each) {
+                if (isset($each['child_menu'])) {
+                    $abilities[] = $each;
+                };
             }
             $data = [
                 'id' => $getUserDetail->id,
@@ -111,7 +146,7 @@ class AuthController extends Controller
                 'alamat' => $getUserDetail->userPegawai->detail->alamat,
                 'unit_kerja' => $getUserDetail->userPegawai->detail->unitKerja->unitkerja,
                 'jabatan' => $getUserDetail->userPegawai->detail->jabatan->namajabatan,
-                'createddate' => $getUserDetail->userPegawai->detail->createddate,
+                'created_at' => $getUserDetail->userPegawai->detail->created_at,
                 'abilities' => $abilities,
             ];
             return response()->json([
