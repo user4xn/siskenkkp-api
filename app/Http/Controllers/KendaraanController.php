@@ -38,6 +38,9 @@ class KendaraanController extends Controller
             ->when($request->idtype, function ($query) use ($request){
                 return $query->where('idtypekdrn', $request->idtype);
             })
+            ->when($request->status, function ($query) use ($request){
+                return $query->where('status', $request->status);
+            })
             ->when($request->search && !$request->idmerk && !$request->idjenis && !$request->idtype, function ($query) use ($request){
                 return $query->where('nopolisi', 'LIKE', '%'.$request->search.'%');
             })
