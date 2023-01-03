@@ -116,6 +116,7 @@ class PinjamPakaiController extends Controller
             $pinjam->es2 = $request->es2;
             $pinjam->es3 = $request->es3;
             $pinjam->es4 = $request->es4;
+            $pinjam->jenispinjam = $request->jenispinjam;
             $pinjam->tglpengembalian = $request->tglpengembalian ? $request->tglpengembalian : null;
             $pinjam->save();
             for($n=0; $n < count($request->idkdrn) ; $n++) {
