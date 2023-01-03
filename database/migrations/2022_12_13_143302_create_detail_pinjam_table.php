@@ -20,6 +20,7 @@ class CreateDetailPinjamTable extends Migration
             $table->date('tglpinjam');
             $table->string('kmsebelum');
             $table->string('remark');
+            $table->string('nomorsk')->nullable();
         });
     }
 

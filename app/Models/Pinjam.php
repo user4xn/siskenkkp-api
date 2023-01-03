@@ -12,6 +12,12 @@ class Pinjam extends Model
         'id',
         'nip',
         'tglpinjam',
+        'es1',
+        'es2',
+        'es3',
+        'es4',
+        'tglpengembalian',
+        'jenispinjam',
     ];
 
     public function detailPinjaman () {

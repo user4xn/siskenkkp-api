@@ -13,18 +13,13 @@ use App\Models\DetailPengembalian;
 use App\Models\FotoPinjam;
 use Validator;
 
-class PinjamPakaiController extends Controller
+class PinjamPakaiControllerV2 extends Controller
 {
     public function __construct() {
         $this->middleware('auth:api');
     }
 
-    public function cariPinjaman (Request $request) {
-        $KendaraanController = new KendaraanController();
-        return $KendaraanController->kendaraan($request);
-    }
-
-    public function pinjaman (Request $request) {
+    public function pinjamanV2 (Request $request) {
         $validator = Validator::make($request->all(), [
             'nip' => 'required|exists:pegawai,nip',
             'start_date' => 'date',
@@ -38,7 +33,8 @@ class PinjamPakaiController extends Controller
             ],400);
         }
         $fetch = Pinjam::with(['detailPinjaman.kendaraan'])
-            ->select('id', 'nip', 'tglpinjam', 'es1', 'es2', 'es3', 'es4', 'jenispinjam', 'tglpengembalian')
+            ->with('detailPengembalian.kendaraan')
+            ->select('id', 'nip', 'tglpinjam')
             ->where('nip', $request->nip)
             ->when($request->start_date && $request->end_date, function ($query) use ($request){
                 return $query->whereBetween('tglpinjam', [$request->start_date, $request->end_date]);
@@ -59,24 +55,38 @@ class PinjamPakaiController extends Controller
                     'kmsebelum' => $dpj->kmsebelum,
                     'remark' => $dpj->remark,
                     'id_kendaraan' => $dpj->kendaraan->id,
-                    'nomor_sk' => $dpj->nomorsk,
                     'nopolisi' => $dpj->kendaraan->nopolisi,
                     'label' => $jenis_dpj.' '.$merk_dpj.' '.$type_dpj,
                     'warna' => $dpj->kendaraan->warna,
                     'urlfoto' => $dpj->kendaraan->foto[0]->urlfoto,
                 ];
             }
+            $detailKembali = [];
+            foreach ($pinjam->detailPengembalian as $dpb){
+                $jenis_dpb = $dpb->kendaraan->jenis ? $dpb->kendaraan->jenis->jenis : '{jenis}';
+                $merk_dpb = $dpb->kendaraan->merk ? $dpb->kendaraan->merk->merk : '{merk}';
+                $type_dpb = $dpb->kendaraan->type ? $dpb->kendaraan->type->type : '{type}';
+                $detailKembali[] = [
+                    'detail_pinjam_id' => $dpb->id,
+                    'tgl_kembali' => $dpb->tglkembali,
+                    'kmsesudah' => $dpb->kmsesudah,
+                    'remark' => $dpb->remark,
+                    'id_kendaraan' => $dpb->kendaraan->id,
+                    'nopolisi' => $dpb->kendaraan->nopolisi,
+                    'label' => $jenis_dpb.' '.$merk_dpb.' '.$type_dpb,
+                    'warna' => $dpb->kendaraan->warna,
+                    'urlfoto' => $dpb->kendaraan->foto[0]->urlfoto,
+                ];
+            }
             $data[] = [
                 'id_pinjam' => $pinjam->id,
                 'nip' => $pinjam->nip,
-                'es1' => ucwords($pinjam->es1),
-                'es2' => ucwords($pinjam->es2),
-                'es3' => ucwords($pinjam->es3),
-                'es4' => ucwords($pinjam->es4),
                 'tgl_pinjam' => $pinjam->tglpinjam,
-                'tgl_pengembalian' => $pinjam->tglpengembalian,
-                'jenispinjam' => $pinjam->jenispinjam,
+                'total_pinjam' => $total_pijaman,
+                'status_pinjaman' => $total_pengembalian == $total_pijaman ? 'Selesai' : 'Belum Selesai',
+                'total_dikembalikan' => $total_pengembalian,
                 'detail_pinjaman' => $detailPinjam,
+                'detail_pengembalian' => $detailKembali,
             ];
         }
         return response()->json([
@@ -86,18 +96,11 @@ class PinjamPakaiController extends Controller
         ], 200);
     }
 
-    public function storePinjaman (Request $request) {
+    public function storePinjamanV2 (Request $request) {
         $validator = Validator::make($request->all(), [
             'nip' => 'required|exists:pegawai,nip',
-            'es1' => 'required',
-            'es2' => 'required',
-            'es3' => 'required',
-            'es4' => 'required',
-            'jenispinjam' => 'required',
-            'tglpengembalian' => 'date|required_if:jenispinjam,==,PPKO',
             'idkdrn.*' => 'required|exists:kendaraan,id',
             'kmsebelum.*' => 'required|integer',
-            'nomorsk' => 'required_if:jenispinjam,==,KOJ',
             'foto.*.*' => 'mimes:jpg,jpeg,png,svg,webp|max:10240'
         ]);
         if($validator->fails()){
@@ -112,11 +115,6 @@ class PinjamPakaiController extends Controller
             $pinjam = new Pinjam();
             $pinjam->nip = $request->nip;
             $pinjam->tglpinjam = date('Y-m-d H:i:s');
-            $pinjam->es1 = $request->es1;
-            $pinjam->es2 = $request->es2;
-            $pinjam->es3 = $request->es3;
-            $pinjam->es4 = $request->es4;
-            $pinjam->tglpengembalian = $request->tglpengembalian ? $request->tglpengembalian : null;
             $pinjam->save();
             for($n=0; $n < count($request->idkdrn) ; $n++) {
                 $checkStatusKendaraan = Kendaraan::where('id', $request->idkdrn[$n])->first();
@@ -134,9 +132,8 @@ class PinjamPakaiController extends Controller
                 $detailPinjam->tglpinjam = date('Y-m-d H:i:s');
                 $detailPinjam->kmsebelum = $request->kmsebelum[$n];
                 $detailPinjam->remark = $request->remark[$n];
-                $detailPinjam->nomorsk = $request->nomorsk ? $request->nomorsk[$n] : null;
                 $detailPinjam->save();
-                $images = $request->file('foto') ? $request->file('foto')[$n] : null;
+                $images = $request->file('foto')[$n];
                 if($images != null){
                     for ($i=0; $i < count($images) ; $i++) { 
                         $image = $images[$i];
@@ -174,10 +171,84 @@ class PinjamPakaiController extends Controller
         }
     }
 
-    public function detailPinjaman (Request $request) {
+    public function storePengembalianV2 (Request $request) {
+        $validator = Validator::make($request->all(), [
+            'idpinjam' => 'required|integer|exists:pinjam,id',
+            'idkdrn.*' => 'required|integer',
+            'kmsesudah.*' => 'required|integer',
+            'foto.*.*' => 'mimes:jpg,jpeg,png,svg,webp|max:10240'
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => $validator->errors(),
+            ],400);
+        }
+        DB::beginTransaction();
+        try {
+            for($n=0; $n < count($request->idkdrn) ; $n++) {
+                $check = DetailPinjam::where(['idpinjam' => $request->idpinjam, 'idkdrn' => $request->idkdrn[$n]])->first();
+                if(!$check) {
+                    DB:rollback();
+                    return response()->json([
+                        'status' => 'failed',
+                        'code' => 400,
+                        'message' => 'Invalid idkdrn '.$request->idkdrn.' on idpinjam '.$request->idpinjam,
+                    ],400);
+                }
+                $detailPengembalian = new DetailPengembalian();
+                $detailPengembalian->idpinjam = $request->idpinjam;
+                $detailPengembalian->idkdrn = $request->idkdrn[$n];
+                $detailPengembalian->tglkembali = date('Y-m-d');
+                $detailPengembalian->kmsesudah = $request->kmsesudah[$n];
+                $detailPengembalian->remark = $request->remark[$n];
+                $detailPengembalian->save();
+                $images = $request->file('foto')[$n];
+                if($images != null){
+                    for ($i=0; $i < count($images) ; $i++) { 
+                        $image = $images[$i];
+                        $name = time().'.'.$image->getClientOriginalExtension();
+                        $destinationPath = storage_path('../public/foto_pengembalian');
+                        $imgFile = Image::make($image->getRealPath());
+                        $imgFile->resize(700, 700, function ($constraint) {
+                            $constraint->aspectRatio();
+                        })->save($destinationPath.'/'.$name);
+                        $path = 'foto_pengembalian/'.$name;
+                        $saveImage = new FotoPinjam();
+                        $saveImage->reference_id = $detailPengembalian->id;
+                        $saveImage->type = 'Pengembalian';
+                        $saveImage->urlfoto = env('APP_URL').$path;
+                        $saveImage->save();
+                    }
+                }
+                $updateStatusKendaraan = Kendaraan::where('id', $request->idkdrn[$n])->update([
+                    'status' => 'Tersedia',
+                    'jaraktempuh' => $request->kmsesudah[$n],
+                ]);
+            }
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'code' => 200,
+                'message' => 'Successfully Store Data Pengembalian',
+            ], 200);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => $th->getMessage(),
+            ], 400);
+        }   
+    }
+
+    public function detailPinjamanV2 (Request $request) {
         $fetch = Pinjam::with('detailPinjaman.detailKendaraan')
             ->with('detailPinjaman.fotoPinjam')
-            ->select('id', 'nip', 'tglpinjam', 'es1', 'es2', 'es3', 'es4', 'jenispinjam', 'tglpengembalian')
+            ->with('detailPengembalian.detailKendaraan')
+            ->with('detailPengembalian.fotoPinjam')
+            ->select('id', 'nip', 'tglpinjam')
             ->where('id', $request->id_pinjaman)
             ->first();
         if($fetch == null) {
@@ -187,14 +258,17 @@ class PinjamPakaiController extends Controller
                 'message' => 'Invalid id pinjam',
             ], 400);
         }
+        $total_pijaman = count($fetch->detailPinjaman);
+        $total_pengembalian = count($fetch->detailPengembalian);
         $detailPinjam = [];
         foreach ($fetch->detailPinjaman as $dpj){
+            $checkPengembalian = DetailPengembalian::where(['idpinjam' => $request->id_pinjaman, 'idkdrn' => $dpj->detailKendaraan->id])->count();
             $detailPinjam[] = [
                 'detail_pinjam_id' => $dpj->id,
-                'nomorsk' => $dpj->nomorsk,
                 'tgl_pinjam' => $dpj->tglpinjam,
                 'kmsebelum' => $dpj->kmsebelum,
                 'remark' => $dpj->remark,
+                'status_pinjaman' => $checkPengembalian > 0 ? 'Sudah Dikembalikan' : 'Belum Dikembalikan',
                 'id_kendaraan' => $dpj->detailKendaraan->id,
                 'nobpkb' => $dpj->detailKendaraan->nobpkb,
                 'nomesin' => $dpj->detailKendaraan->nomesin,
@@ -211,26 +285,43 @@ class PinjamPakaiController extends Controller
                 'foto_peminjaman' => $dpj->fotoPinjam,  
             ];
         }
+        $detailKembali = [];
+        foreach ($fetch->detailPengembalian as $dpb){
+            $detailKembali[] = [
+                'detail_pinjam_id' => $dpb->id,
+                'tgl_kembali' => $dpb->tglkembali,
+                'kmsesudah' => $dpb->kmsesudah,
+                'remark' => $dpb->remark,
+                'id_kendaraan' => $dpb->detailKendaraan->id,
+                'nobpkb' => $dpb->detailKendaraan->nobpkb,
+                'nomesin' => $dpb->detailKendaraan->nomesin,
+                'norangka' => $dpb->detailKendaraan->norangka,
+                'nopolisi' => $dpb->detailKendaraan->nopolisi,
+                'thnkdrn' => $dpb->detailKendaraan->thnkdrn,
+                'tglpajak' => $dpb->detailKendaraan->tglpajak,
+                'tglmatipajak' => $dpb->detailKendaraan->tglmatipajak,
+                'merk' => $dpb->detailKendaraan->merk ? $dpb->detailKendaraan->merk->merk : false,
+                'jenis' => $dpb->detailKendaraan->jenis ? $dpb->detailKendaraan->jenis->jenis : false,
+                'type' => $dpb->detailKendaraan->type ? $dpb->detailKendaraan->type->type : false,
+                'warna' => $dpb->detailKendaraan->warna,
+                'foto_kendaraan' => $dpb->detailKendaraan->foto,
+                'foto_peminjaman' => $dpb->fotoPinjam,  
+            ];
+        }
         $data = [
             'id_pinjam' => $fetch->id,
             'nip' => $fetch->nip,
-            'es1' => ucwords($fetch->es1),
-            'es2' => ucwords($fetch->es2),
-            'es3' => ucwords($fetch->es3),
-            'es4' => ucwords($fetch->es4),
             'tgl_pinjam' => $fetch->tglpinjam,
-            'tgl_pengembalian' => $fetch->tglpengembalian,
-            'jenispinjam' => $fetch->jenispinjam,
+            'total_pinjam' => $total_pijaman,
+            'total_dikembalikan' => $total_pengembalian,
+            'status_pinjaman' => $total_pengembalian == $total_pijaman ? 'Selesai' : 'Belum Selesai',
             'detail_pinjaman' => $detailPinjam,
+            'detail_pengembalian' => $detailKembali,
         ];
         return response()->json([
             'status' => 'success',
             'code' => 200,
             'data' => $data,
         ], 200);
-    }
-
-    public function cronPengembalian (Request $request) {
-        return 'asdasd';
     }
 }

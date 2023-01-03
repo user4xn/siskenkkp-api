@@ -17,6 +17,12 @@ class CreatePinjamTable extends Migration
             $table->id();
             $table->string('nip');
             $table->date('tglpinjam');
+            $table->date('tglpengembalian')->nullable();
+            $table->enum('jenispinjam', ['KOJ', 'PPKO']);
+            $table->string('es1');
+            $table->string('es2');
+            $table->string('es3');
+            $table->string('es4');
             $table->timestamps();
         });
     }

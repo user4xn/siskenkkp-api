@@ -15,6 +15,7 @@ class DetailPinjam extends Model
         'tglpinjam',
         'kmsebelum',
         'remark',
+        'nomorsk',
     ];
 
     public $timestamps = false;

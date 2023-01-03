@@ -8,6 +8,7 @@ use App\Http\Controllers\KendaraanController;
 use App\Http\Controllers\OptionsController;
 use App\Http\Controllers\PinjamPakaiController;
 use App\Http\Controllers\ServisController;
+use App\Http\Controllers\CronController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -34,6 +35,10 @@ Route::group(['middleware' => 'api','prefix' => 'admin'], function ($router) {
     Route::get('/pinjam-pakai/detail/{id_pinjaman}', [AdminController::class, 'detailPinjaman']);
     Route::post('/pinjam-pakai/pinjaman/store', [AdminController::class, 'storePinjaman']);
     Route::post('/pinjam-pakai/pengembalian/store', [AdminController::class, 'storePengembalian']);
+});
+
+Route::group(['middleware' => 'api','prefix' => 'cron'], function ($router) {
+    Route::put('/pinjam-pakai/pengembalian', [CronController::class, 'pengembalianPinjamPakai']);
 });
 
 Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
@@ -74,10 +79,16 @@ Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
     Route::get('/pinjam-pakai/detail/{id_pinjaman}', [PinjamPakaiController::class, 'detailPinjaman']);
     Route::get('/pinjam-pakai/cari', [PinjamPakaiController::class, 'cariPinjaman']);
     Route::post('/pinjam-pakai/pinjaman/store', [PinjamPakaiController::class, 'storePinjaman']);
-    Route::post('/pinjam-pakai/pengembalian/store', [PinjamPakaiController::class, 'storePengembalian']);
 
     Route::get('/servis/detail/{id_kendaraan}', [ServisController::class, 'detailServis']);
     Route::post('/servis/store', [ServisController::class, 'storeServis']);
+});
+
+Route::group(['middleware' => 'api','prefix' => 'v2'], function ($router) {
+    Route::get('/pinjam-pakai', [PinjamPakaiControllerV2::class, 'pinjamanV2']);
+    Route::get('/pinjam-pakai/detail/{id_pinjaman}', [PinjamPakaiControllerV2::class, 'detailPinjamanV2']);
+    Route::post('/pinjam-pakai/pinjaman/store', [PinjamPakaiControllerV2::class, 'storePinjamanV2']);
+    Route::post('/pinjam-pakai/pengembalian/store', [PinjamPakaiControllerV2::class, 'storePengembalianV2']);
 });
 
 Route::any('/unauthorized', function () {
