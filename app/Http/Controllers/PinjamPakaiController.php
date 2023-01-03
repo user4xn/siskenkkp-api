@@ -177,6 +177,7 @@ class PinjamPakaiController extends Controller
     public function detailPinjaman (Request $request) {
         $fetch = Pinjam::with('detailPinjaman.detailKendaraan')
             ->with('detailPinjaman.fotoPinjam')
+            ->with('detailPinjaman.detailBbm')
             ->select('id', 'nip', 'tglpinjam', 'es1', 'es2', 'es3', 'es4', 'jenispinjam', 'tglpengembalian')
             ->where('id', $request->id_pinjaman)
             ->first();
@@ -208,7 +209,8 @@ class PinjamPakaiController extends Controller
                 'type' => $dpj->detailKendaraan->type ? $dpj->detailKendaraan->type->type : false,
                 'warna' => $dpj->detailKendaraan->warna,
                 'foto_kendaraan' => $dpj->detailKendaraan->foto,
-                'foto_peminjaman' => $dpj->fotoPinjam,  
+                'foto_peminjaman' => $dpj->fotoPinjam, 
+                'data_bbm' => $dpj->detailBbm,  
             ];
         }
         $data = [
@@ -228,9 +230,5 @@ class PinjamPakaiController extends Controller
             'code' => 200,
             'data' => $data,
         ], 200);
-    }
-
-    public function cronPengembalian (Request $request) {
-        return 'asdasd';
     }
 }

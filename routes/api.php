@@ -9,6 +9,7 @@ use App\Http\Controllers\OptionsController;
 use App\Http\Controllers\PinjamPakaiController;
 use App\Http\Controllers\ServisController;
 use App\Http\Controllers\CronController;
+use App\Http\Controllers\BbmController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -79,6 +80,8 @@ Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
     Route::get('/pinjam-pakai/detail/{id_pinjaman}', [PinjamPakaiController::class, 'detailPinjaman']);
     Route::get('/pinjam-pakai/cari', [PinjamPakaiController::class, 'cariPinjaman']);
     Route::post('/pinjam-pakai/pinjaman/store', [PinjamPakaiController::class, 'storePinjaman']);
+    
+    Route::post('/bahan-bakar/store', [BbmController::class, 'storeBbm']);
 
     Route::get('/servis/detail/{id_kendaraan}', [ServisController::class, 'detailServis']);
     Route::post('/servis/store', [ServisController::class, 'storeServis']);
