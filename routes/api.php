@@ -75,6 +75,7 @@ Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
     Route::get('/options/jenis-servis', [OptionsController::class, 'dataJenisServis']);
     Route::post('/options/jenis-servis/store', [OptionsController::class, 'storeJenisServis']);
     Route::delete('/options/jenis-servis/{id_jenis_servis}/delete', [OptionsController::class, 'deleteJenisServis']);
+    Route::get('/options/detail-pinjaman/{nip}', [OptionsController::class, 'dataDetailPinjaman']);
 
     Route::get('/pinjam-pakai', [PinjamPakaiController::class, 'pinjaman']);
     Route::get('/pinjam-pakai/detail/{id_pinjaman}', [PinjamPakaiController::class, 'detailPinjaman']);

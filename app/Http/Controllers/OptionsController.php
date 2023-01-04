@@ -14,6 +14,7 @@ use App\Models\Jabatan;
 use App\Models\JenisServis;
 use App\Models\Kendaraan;
 use App\Models\Pegawai;
+use App\Models\Pinjam;
 use App\Models\DetailServis;
 use Validator;
 
@@ -461,5 +462,32 @@ class OptionsController extends Controller
                 'message' => $th->getMessage(),
             ], 400);
         }
+    }
+
+    public function dataDetailPinjaman (Request $request) {
+        $fetch = Pinjam::with('detailPinjaman.detailKendaraan')
+            ->select('id', 'nip', 'tglpinjam', 'es1', 'es2', 'es3', 'es4', 'jenispinjam', 'tglpengembalian')
+            ->where('nip', $request->nip)
+            ->when($request->start_date && $request->end_date, function ($query) use ($request){
+                return $query->whereBetween('tglpinjam', [$request->start_date, $request->end_date]);
+            })
+            ->get();
+        $response = [];
+        foreach ($fetch as $detail) {
+            foreach ($detail->detailPinjaman as $detailPinjam) {
+                if ($detailPinjam->detailKendaraan->status) {
+                    $response[] = [
+                        'iddetailpinjam' => $detailPinjam->id,
+                        'tglpinjam' => $detailPinjam->tglpinjam,
+                        'nopolisi' => $detailPinjam->detailKendaraan->nopolisi,
+                    ];
+                }
+            }
+        }
+        return response()->json([
+            'status' => 'success',
+            'code' => 200,
+            'data' => $response
+        ], 200);
     }
 }
