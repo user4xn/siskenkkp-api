@@ -215,8 +215,7 @@ class AdminController extends Controller
             ],400);
         }
         $fetch = Pinjam::with(['detailPinjaman.kendaraan'])
-            ->with('detailPengembalian.kendaraan')
-            ->select('id', 'nip', 'tglpinjam')
+            ->select('id', 'nip', 'tglpinjam', 'es1', 'es2', 'es3', 'es4', 'jenispinjam', 'tglpengembalian')
             ->when($request->start_date && $request->end_date, function ($query) use ($request){
                 return $query->whereBetween('tglpinjam', [$request->start_date, $request->end_date]);
             })
@@ -236,38 +235,24 @@ class AdminController extends Controller
                     'kmsebelum' => $dpj->kmsebelum,
                     'remark' => $dpj->remark,
                     'id_kendaraan' => $dpj->kendaraan->id,
+                    'nomor_sk' => $dpj->nomorsk,
                     'nopolisi' => $dpj->kendaraan->nopolisi,
                     'label' => $jenis_dpj.' '.$merk_dpj.' '.$type_dpj,
                     'warna' => $dpj->kendaraan->warna,
                     'urlfoto' => $dpj->kendaraan->foto[0]->urlfoto,
                 ];
             }
-            $detailKembali = [];
-            foreach ($pinjam->detailPengembalian as $dpb){
-                $jenis_dpb = $dpb->kendaraan->jenis ? $dpb->kendaraan->jenis->jenis : '{jenis}';
-                $merk_dpb = $dpb->kendaraan->merk ? $dpb->kendaraan->merk->merk : '{merk}';
-                $type_dpb = $dpb->kendaraan->type ? $dpb->kendaraan->type->type : '{type}';
-                $detailKembali[] = [
-                    'detail_pinjam_id' => $dpb->id,
-                    'tgl_kembali' => $dpb->tglkembali,
-                    'kmsesudah' => $dpb->kmsesudah,
-                    'remark' => $dpb->remark,
-                    'id_kendaraan' => $dpb->kendaraan->id,
-                    'nopolisi' => $dpb->kendaraan->nopolisi,
-                    'label' => $jenis_dpb.' '.$merk_dpb.' '.$type_dpb,
-                    'warna' => $dpb->kendaraan->warna,
-                    'urlfoto' => $dpb->kendaraan->foto[0]->urlfoto,
-                ];
-            }
             $data[] = [
                 'id_pinjam' => $pinjam->id,
                 'nip' => $pinjam->nip,
+                'es1' => ucwords($pinjam->es1),
+                'es2' => ucwords($pinjam->es2),
+                'es3' => ucwords($pinjam->es3),
+                'es4' => ucwords($pinjam->es4),
                 'tgl_pinjam' => $pinjam->tglpinjam,
-                'total_pinjam' => $total_pijaman,
-                'status_pinjaman' => $total_pengembalian == $total_pijaman ? 'Selesai' : 'Belum Selesai',
-                'total_dikembalikan' => $total_pengembalian,
+                'tgl_pengembalian' => $pinjam->tglpengembalian,
+                'jenispinjam' => $pinjam->jenispinjam,
                 'detail_pinjaman' => $detailPinjam,
-                'detail_pengembalian' => $detailKembali,
             ];
         }
         return response()->json([

@@ -81,7 +81,10 @@ Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
     Route::get('/pinjam-pakai/cari', [PinjamPakaiController::class, 'cariPinjaman']);
     Route::post('/pinjam-pakai/pinjaman/store', [PinjamPakaiController::class, 'storePinjaman']);
     
+    Route::get('/bahan-bakar', [BbmController::class, 'bbm']);
     Route::post('/bahan-bakar/store', [BbmController::class, 'storeBbm']);
+    Route::put('/bahan-bakar/{id_bbm}/update', [BbmController::class, 'updateBbm']);
+    Route::delete('/bahan-bakar/{id_bbm}/delete', [BbmController::class, 'deleteBbm']);
 
     Route::get('/servis/detail/{id_kendaraan}', [ServisController::class, 'detailServis']);
     Route::post('/servis/store', [ServisController::class, 'storeServis']);

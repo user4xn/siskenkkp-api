@@ -19,4 +19,8 @@ class Bbm extends Model
         'harga',
         'total',
     ];
+
+    public function detailPinjam () {
+        return $this->hasOne('App\Models\DetailPinjam', 'id', 'iddetailpinjam');
+    }
 }
