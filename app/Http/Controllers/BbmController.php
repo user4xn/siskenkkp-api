@@ -24,14 +24,6 @@ class BbmController extends Controller
                 'message' => 'Unauthorized User Ability',
             ],400);
         }
-        $checkAbility = (new AuthController)->checkAbility('Kendaraan', 'View');
-        if(!$checkAbility){
-            return response()->json([
-                'status' => 'failed',
-                'code' => 400,
-                'message' => 'Unauthorized User Ability',
-            ],400);
-        }
         $fetch = Bbm::with('detailPinjam.kendaraan')
             ->when($request->start_date && $request->end_date, function ($query) use ($request) {
                 return $query->whereBetween(DB::raw('DATE(created_at)'), [$request->start_date, $request->end_date]);
