@@ -19,7 +19,7 @@ class KendaraanController extends Controller
     }
 
     public function kendaraan (Request $request) {
-        $checkAbility = (new AuthController)->checkAbility('Kendaraan', 'View');
+        $checkAbility = (new AuthController)->checkAbility('Data Kendaraan', 'View');
         if(!$checkAbility){
             return response()->json([
                 'status' => 'failed',
@@ -83,7 +83,7 @@ class KendaraanController extends Controller
     }
 
     public function detailKendaraan (Request $request) {
-        $checkAbility = (new AuthController)->checkAbility('Kendaraan', 'View');
+        $checkAbility = (new AuthController)->checkAbility('Data Kendaraan', 'View');
         if(!$checkAbility){
             return response()->json([
                 'status' => 'failed',
@@ -134,7 +134,7 @@ class KendaraanController extends Controller
     }
 
     public function store (Request $request) {
-        $checkAbility = (new AuthController)->checkAbility('Kendaraan', 'Create');
+        $checkAbility = (new AuthController)->checkAbility('Data Kendaraan', 'Create');
         if(!$checkAbility){
             return response()->json([
                 'status' => 'failed',
@@ -220,7 +220,7 @@ class KendaraanController extends Controller
     }
 
     public function update (Request $request) {
-        $checkAbility = (new AuthController)->checkAbility('Kendaraan', 'Update');
+        $checkAbility = (new AuthController)->checkAbility('Data Kendaraan', 'Update');
         if(!$checkAbility){
             return response()->json([
                 'status' => 'failed',
@@ -321,7 +321,7 @@ class KendaraanController extends Controller
     }
 
     public function destroy (Request $request) {
-        $checkAbility = (new AuthController)->checkAbility('Kendaraan', 'Delete');
+        $checkAbility = (new AuthController)->checkAbility('Data Kendaraan', 'Delete');
         if(!$checkAbility){
             return response()->json([
                 'status' => 'failed',
