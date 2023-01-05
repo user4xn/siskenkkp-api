@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Intervention\Image\Facades\Image;
 use App\Http\Controllers\KendaraanController;
+use App\Http\Controllers\AuthController;
 use App\Models\Pinjam;
 use App\Models\Kendaraan;
 use App\Models\DetailPinjam;
@@ -20,11 +21,27 @@ class PinjamPakaiController extends Controller
     }
 
     public function cariPinjaman (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai', 'View');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         $KendaraanController = new KendaraanController();
         return $KendaraanController->kendaraan($request);
     }
 
     public function pinjaman (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai', 'View');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         $validator = Validator::make($request->all(), [
             'nip' => 'required|exists:pegawai,nip',
             'start_date' => 'date',
@@ -87,6 +104,14 @@ class PinjamPakaiController extends Controller
     }
 
     public function storePinjaman (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai', 'Create');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         $validator = Validator::make($request->all(), [
             'nip' => 'required|exists:pegawai,nip',
             'es1' => 'required',
@@ -176,6 +201,14 @@ class PinjamPakaiController extends Controller
     }
 
     public function detailPinjaman (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai', 'View');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         $fetch = Pinjam::with('detailPinjaman.detailKendaraan')
             ->with('detailPinjaman.fotoPinjam')
             ->with('detailPinjaman.detailBbm')

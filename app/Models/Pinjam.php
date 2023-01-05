@@ -27,4 +27,8 @@ class Pinjam extends Model
     public function detailPengembalian () {
         return $this->hasMany('App\Models\DetailPengembalian', 'idpinjam', 'id');
     }
+
+    public function detailPegawai () {
+        return $this->hasOne('App\Models\Pegawai', 'nip', 'nip')->with('unitKerja')->with('jabatan')->with('userPegawai');
+    }
 }

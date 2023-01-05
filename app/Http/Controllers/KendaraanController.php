@@ -9,6 +9,7 @@ use App\Models\MerkKendaraan;
 use App\Models\JenisKendaraan;
 use App\Models\TypeKendaraan;
 use App\Models\Foto;
+use App\Http\Controllers\AuthController;
 use Validator;
 
 class KendaraanController extends Controller
@@ -18,6 +19,14 @@ class KendaraanController extends Controller
     }
 
     public function kendaraan (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Kendaraan', 'View');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         $limit = $request->limit ? $request->limit : 10;
         $offset = $request->offset ? $request->offset : 0;
         if($request->search){
@@ -74,6 +83,14 @@ class KendaraanController extends Controller
     }
 
     public function detailKendaraan (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Kendaraan', 'View');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         $fetch = Kendaraan::with('type')
             ->with('merk')
             ->with('jenis')
@@ -117,6 +134,14 @@ class KendaraanController extends Controller
     }
 
     public function store (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Kendaraan', 'Create');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         $validator = Validator::make($request->all(), [
             'idtype' => 'required|integer|exists:type_kendaraan,id',
             'idjenis' => 'required|integer|exists:jenis_kendaraan,id',
@@ -195,6 +220,14 @@ class KendaraanController extends Controller
     }
 
     public function update (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Kendaraan', 'Update');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         $validator = Validator::make($request->all(), [
             'idtype' => 'required|integer|exists:type_kendaraan,id',
             'idjenis' => 'required|integer|exists:jenis_kendaraan,id',
@@ -288,6 +321,14 @@ class KendaraanController extends Controller
     }
 
     public function destroy (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Kendaraan', 'Delete');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         DB::beginTransaction();
         try {
             $fetch = Kendaraan::where('id', $request->kendaraan_id)->first();

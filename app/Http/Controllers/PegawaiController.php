@@ -22,6 +22,14 @@ class PegawaiController extends Controller
     }
 
     public function pegawai (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Data Pegawai', 'View');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         $limit = $request->limit ? $request->limit : 10;
         $offset = $request->offset ? $request->offset : 0;
         if($request->search){
@@ -75,6 +83,14 @@ class PegawaiController extends Controller
     }
 
     public function detailPegawai (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Data Pegawai', 'View');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         $fetch = Pegawai::select('nip', 'nama', 'jk', 'alamat', 'idbiro', 'idjabatan')
             ->with('unitkerja')
             ->with('jabatan')
@@ -123,6 +139,14 @@ class PegawaiController extends Controller
     }
 
     public function store (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Data Pegawai', 'Create');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|confirmed|min:6',
@@ -200,6 +224,14 @@ class PegawaiController extends Controller
     }
 
     public function update (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Data Pegawai', 'Update');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         $validator = Validator::make($request->all(), [
             'idbiro' => 'exists:unit_kerja,id',
             'idjabatan' => 'exists:jabatan,id',
@@ -288,6 +320,14 @@ class PegawaiController extends Controller
     }
 
     public function destroy (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Data Pegawai', 'Delete');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         DB::beginTransaction();
         try {
             $userPegawai = UserPegawai::select('userid', 'nip')->where('userid', $request->user_id)->first();

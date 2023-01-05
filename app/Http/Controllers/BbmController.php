@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Pinjam;
 use App\Models\Bbm;
+use App\Http\Controllers\AuthController;
 use Validator;
 
 class BbmController extends Controller
@@ -15,6 +16,22 @@ class BbmController extends Controller
     }
 
     public function bbm (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Bahan Bakar', 'View');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
+        $checkAbility = (new AuthController)->checkAbility('Kendaraan', 'View');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         $fetch = Bbm::with('detailPinjam.kendaraan')
             ->when($request->start_date && $request->end_date, function ($query) use ($request) {
                 return $query->whereBetween(DB::raw('DATE(created_at)'), [$request->start_date, $request->end_date]);
@@ -57,6 +74,14 @@ class BbmController extends Controller
     }
 
     public function storeBbm (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Bahan Bakar', 'Create');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         $validator = Validator::make($request->all(), [
             'iddetailpinjam' => 'required|exists:detail_pinjam,id',
             'kmsebelum' => 'required|integer',
@@ -103,6 +128,14 @@ class BbmController extends Controller
     }
 
     public function updateBbm (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Bahan Bakar', 'Update');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         DB::beginTransaction();
         try {
             $fetch = Bbm::where(['id' => $request->id_bbm])->first();
@@ -141,6 +174,14 @@ class BbmController extends Controller
     }
 
     public function deleteBbm (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Bahan Bakar', 'Delete');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         DB::beginTransaction();
         try {
             $delete = Bbm::where('id', $request->id_bbm)->delete();

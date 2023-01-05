@@ -8,11 +8,20 @@ use App\Models\Servis;
 use App\Models\DetailServis;
 use App\Models\JenisServis;
 use App\Models\Kendaraan;
+use App\Http\Controllers\AuthController;
 use Validator;  
 
 class ServisController extends Controller
 {
     public function detailServis (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Service', 'View');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         $fetchKendaraan = Kendaraan::select('id')->where(['id' => $request->id_kendaraan])->first();
         if($fetchKendaraan ==  null) {
             return response()->json([
@@ -32,6 +41,14 @@ class ServisController extends Controller
     }
 
     public function storeServis (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Service', 'Create');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
         $validator = Validator::make($request->all(), [
             'idkdrn' => 'required|exists:kendaraan,id',
             'tgl' => 'required|date',

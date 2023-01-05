@@ -10,6 +10,7 @@ use App\Http\Controllers\PinjamPakaiController;
 use App\Http\Controllers\ServisController;
 use App\Http\Controllers\CronController;
 use App\Http\Controllers\BbmController;
+use App\Http\Controllers\ReportController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -89,6 +90,9 @@ Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
 
     Route::get('/servis/detail/{id_kendaraan}', [ServisController::class, 'detailServis']);
     Route::post('/servis/store', [ServisController::class, 'storeServis']);
+
+    Route::get('/report/pinjam-pakai', [ReportController::class, 'pinjamPakai']);
+    Route::get('/report/pinjam-pakai/{id_pinjaman}/report', [ReportController::class, 'reportPinjamPakai']);
 });
 
 Route::group(['middleware' => 'api','prefix' => 'v2'], function ($router) {
