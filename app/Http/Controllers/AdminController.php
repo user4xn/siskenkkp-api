@@ -265,12 +265,7 @@ class AdminController extends Controller
 
     public function storePinjaman (Request $request) {
         $PinjamPakaiController = new PinjamPakaiController();
-        return $PinjamPakaiController->storePinjam($request);
-    }
-
-    public function storePengembalian (Request $request) {
-        $PinjamPakaiController = new PinjamPakaiController();
-        return $PinjamPakaiController->storePengembalian($request);
+        return $PinjamPakaiController->storePinjaman($request);
     }
 
     public function detailPinjaman (Request $request) {
