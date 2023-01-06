@@ -465,9 +465,24 @@ class OptionsController extends Controller
     }
 
     public function dataDetailPinjaman (Request $request) {
+        $user = auth()->user();
+        if($user->role_id != 1) {
+            $validator = Validator::make($request->all(), [
+                'nip' => 'required|integer',
+            ]);
+            if($validator->fails()){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => $validator->errors(),
+                ],400);
+            }
+        }
         $fetch = Pinjam::with('detailPinjaman.detailKendaraan')
             ->select('id', 'nip', 'tglpinjam', 'es1', 'es2', 'es3', 'es4', 'jenispinjam', 'tglpengembalian')
-            ->where('nip', $request->nip)
+            ->when($request->nip, function ($nip) use ($request) {
+                return $nip->where('nip', $request->nip);
+            })
             ->when($request->start_date && $request->end_date, function ($query) use ($request){
                 return $query->whereBetween('tglpinjam', [$request->start_date, $request->end_date]);
             })
