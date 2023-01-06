@@ -9,10 +9,24 @@ use App\Models\DetailServis;
 use App\Models\JenisServis;
 use App\Models\Kendaraan;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\KendaraanController;
 use Validator;  
 
 class ServisController extends Controller
 {
+    public function listKendaraan (Request $request) {
+        $checkAbility = (new AuthController)->checkAbility('Service', 'View');
+        if(!$checkAbility){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => 'Unauthorized User Ability',
+            ],400);
+        }
+        $KendaraanController = new KendaraanController();
+        return $KendaraanController->kendaraan($request);
+    }
+
     public function detailServis (Request $request) {
         $checkAbility = (new AuthController)->checkAbility('Service', 'View');
         if(!$checkAbility){

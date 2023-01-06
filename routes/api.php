@@ -88,6 +88,7 @@ Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
     Route::put('/bahan-bakar/{id_bbm}/update', [BbmController::class, 'updateBbm']);
     Route::delete('/bahan-bakar/{id_bbm}/delete', [BbmController::class, 'deleteBbm']);
 
+    Route::get('/servis', [ServisController::class, 'listKendaraan']);
     Route::get('/servis/detail/{id_kendaraan}', [ServisController::class, 'detailServis']);
     Route::post('/servis/store', [ServisController::class, 'storeServis']);
 
