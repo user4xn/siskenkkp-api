@@ -216,6 +216,7 @@ class AdminController extends Controller
         }
         $fetch = Pinjam::with(['detailPinjaman.kendaraan'])
             ->select('id', 'nip', 'tglpinjam', 'es1', 'es2', 'es3', 'es4', 'jenispinjam', 'tglpengembalian')
+            ->where('jenispinjam', strtoupper($request->tipe))
             ->when($request->start_date && $request->end_date, function ($query) use ($request){
                 return $query->whereBetween('tglpinjam', [$request->start_date, $request->end_date]);
             })
@@ -275,5 +276,10 @@ class AdminController extends Controller
     public function detailPinjaman (Request $request) {
         $PinjamPakaiController = new PinjamPakaiController();
         return $PinjamPakaiController->detailPinjaman($request);
+    }
+
+    public function lastestRecord (Request $request) {
+        $PinjamPakaiController = new PinjamPakaiController();
+        return $PinjamPakaiController->lastestRecord($request);
     }
 }
