@@ -21,26 +21,48 @@ class PinjamPakaiController extends Controller
     }
 
     public function cariPinjaman (Request $request) {
-        $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai', 'View');
-        if(!$checkAbility){
-            return response()->json([
-                'status' => 'failed',
-                'code' => 400,
-                'message' => 'Unauthorized User Ability',
-            ],400);
+        if($request->tipe == 'ppko'){
+            $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai', 'View');
+            if(!$checkAbility){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Unauthorized User Ability',
+                ],400);
+            }
+        } else {
+            $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai KOJ', 'View');
+            if(!$checkAbility){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Unauthorized User Ability',
+                ],400);
+            }
         }
         $KendaraanController = new KendaraanController();
         return $KendaraanController->kendaraan($request);
     }
 
     public function pinjaman (Request $request) {
-        $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai', 'View');
-        if(!$checkAbility){
-            return response()->json([
-                'status' => 'failed',
-                'code' => 400,
-                'message' => 'Unauthorized User Ability',
-            ],400);
+        if($request->tipe == 'ppko'){
+            $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai', 'View');
+            if(!$checkAbility){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Unauthorized User Ability',
+                ],400);
+            }
+        } else {
+            $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai KOJ', 'View');
+            if(!$checkAbility){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Unauthorized User Ability',
+                ],400);
+            }
         }
         $validator = Validator::make($request->all(), [
             'nip' => 'required|exists:pegawai,nip',
@@ -57,6 +79,7 @@ class PinjamPakaiController extends Controller
         $fetch = Pinjam::with(['detailPinjaman.kendaraan'])
             ->select('id', 'nip', 'tglpinjam', 'es1', 'es2', 'es3', 'es4', 'jenispinjam', 'tglpengembalian')
             ->where('nip', $request->nip)
+            ->where('jenispinjam', strtoupper($request->tipe))
             ->when($request->start_date && $request->end_date, function ($query) use ($request){
                 return $query->whereBetween('tglpinjam', [$request->start_date, $request->end_date]);
             })
@@ -104,13 +127,24 @@ class PinjamPakaiController extends Controller
     }
 
     public function storePinjaman (Request $request) {
-        $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai', 'Create');
-        if(!$checkAbility){
-            return response()->json([
-                'status' => 'failed',
-                'code' => 400,
-                'message' => 'Unauthorized User Ability',
-            ],400);
+        if($request->tipe == 'ppko'){
+            $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai', 'Create');
+            if(!$checkAbility){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Unauthorized User Ability',
+                ],400);
+            }
+        } else {
+            $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai KOJ', 'Create');
+            if(!$checkAbility){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Unauthorized User Ability',
+                ],400);
+            }
         }
         $validator = Validator::make($request->all(), [
             'nip' => 'required|exists:pegawai,nip',
@@ -201,13 +235,24 @@ class PinjamPakaiController extends Controller
     }
 
     public function detailPinjaman (Request $request) {
-        $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai', 'View');
-        if(!$checkAbility){
-            return response()->json([
-                'status' => 'failed',
-                'code' => 400,
-                'message' => 'Unauthorized User Ability',
-            ],400);
+        if($request->tipe == 'ppko'){
+            $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai', 'View');
+            if(!$checkAbility){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Unauthorized User Ability',
+                ],400);
+            }
+        } else {
+            $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai KOJ', 'View');
+            if(!$checkAbility){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Unauthorized User Ability',
+                ],400);
+            }
         }
         $fetch = Pinjam::with('detailPinjaman.detailKendaraan')
             ->with('detailPinjaman.fotoPinjam')
@@ -263,6 +308,47 @@ class PinjamPakaiController extends Controller
             'status' => 'success',
             'code' => 200,
             'data' => $data,
+        ], 200);
+    }
+
+    public function lastestRecord (Request $request) {
+        if($request->tipe == 'ppko'){
+            $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai', 'View');
+            if(!$checkAbility){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Unauthorized User Ability',
+                ],400);
+            }
+        } else {
+            $checkAbility = (new AuthController)->checkAbility('Pinjam Pakai KOJ', 'View');
+            if(!$checkAbility){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Unauthorized User Ability',
+                ],400);
+            }
+        }
+        $validator = Validator::make($request->all(), [
+            'nip' => 'required|exists:pegawai,nip',
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => $validator->errors(),
+            ],400);
+        }
+        $fetch = Pinjam::select('id', 'nip', 'tglpinjam', 'es1', 'es2', 'es3', 'es4', 'jenispinjam', 'tglpengembalian')
+            ->where('nip', $request->nip)
+            ->orderBy('created_at', 'DESC')
+            ->first();
+        return response()->json([
+            'status' => 'success',
+            'code' => 200,
+            'data' => $fetch,
         ], 200);
     }
 }

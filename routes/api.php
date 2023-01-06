@@ -78,10 +78,11 @@ Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
     Route::delete('/options/jenis-servis/{id_jenis_servis}/delete', [OptionsController::class, 'deleteJenisServis']);
     Route::get('/options/detail-pinjaman', [OptionsController::class, 'dataDetailPinjaman']);
 
-    Route::get('/pinjam-pakai', [PinjamPakaiController::class, 'pinjaman']);
-    Route::get('/pinjam-pakai/detail/{id_pinjaman}', [PinjamPakaiController::class, 'detailPinjaman']);
-    Route::get('/pinjam-pakai/cari', [PinjamPakaiController::class, 'cariPinjaman']);
-    Route::post('/pinjam-pakai/pinjaman/store', [PinjamPakaiController::class, 'storePinjaman']);
+    Route::get('/pinjam-pakai/{tipe}', [PinjamPakaiController::class, 'pinjaman']);
+    Route::get('/pinjam-pakai/{tipe}/detail/{id_pinjaman}', [PinjamPakaiController::class, 'detailPinjaman']);
+    Route::get('/pinjam-pakai/{tipe}/cari', [PinjamPakaiController::class, 'cariPinjaman']);
+    Route::post('/pinjam-pakai/{tipe}/pinjaman/store', [PinjamPakaiController::class, 'storePinjaman']);
+    Route::get('/pinjam-pakai/{tipe}/lastest-record', [PinjamPakaiController::class, 'lastestRecord']);
     
     Route::get('/bahan-bakar', [BbmController::class, 'bbm']);
     Route::post('/bahan-bakar/store', [BbmController::class, 'storeBbm']);

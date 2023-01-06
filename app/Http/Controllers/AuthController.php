@@ -180,6 +180,9 @@ class AuthController extends Controller
     public function checkAbility ($menu, $ability) {
         $dataUser = auth()->user();
         $getAbilitySU = AbilityMenu::where('name', $menu)->first();
+        if(!$getAbilitySU){
+            return false;
+        }
         $checkAbility = UserAbility::join('abilities', 'ability_id', '=', 'abilities.id')
             ->where('ability_name', $ability)
             ->where(['user_id' => $dataUser->id, 'ability_menu_id' => $getAbilitySU->id])
