@@ -77,8 +77,30 @@ class PinjamPakaiController extends Controller
             ],400);
         }
         $fetch = Pinjam::with(['detailPinjaman.kendaraan'])
-            ->select('id', 'nip', 'tglpinjam', 'es1', 'es2', 'es3', 'es4', 'jenispinjam', 'tglpengembalian')
+            ->select(
+                'id', 
+                'nip',
+                'tglpinjam',
+                'es1',
+                'es2',
+                'es3',
+                'es4',
+                'status',
+                'nippenanggungjawab',
+                'nippemakai',
+                'nippenyetuju',
+                'es4',
+                'jenispinjam',
+                'tglpengembalian'
+            )
             ->where('nip', $request->nip)
+            ->with('eselon1')
+            ->with('eselon2')
+            ->with('eselon3')
+            ->with('eselon4')
+            ->with('penanggungJawab')
+            ->with('pemakai')
+            ->with('penyetuju')
             ->where('jenispinjam', strtoupper($request->tipe))
             ->when($request->start_date && $request->end_date, function ($query) use ($request){
                 return $query->whereBetween('tglpinjam', [$request->start_date, $request->end_date]);
@@ -109,14 +131,18 @@ class PinjamPakaiController extends Controller
             $data[] = [
                 'id_pinjam' => $pinjam->id,
                 'nip' => $pinjam->nip,
-                'es1' => ucwords($pinjam->es1),
-                'es2' => ucwords($pinjam->es2),
-                'es3' => ucwords($pinjam->es3),
-                'es4' => ucwords($pinjam->es4),
+                'penanggung_jawab' => $pinjam->penanggungJawab->nama,
+                'pemakai' => $pinjam->pemakai->nama,
+                'penyetuju' => $pinjam->penyetuju ? $pinjam->penyetuju->nama : '',
+                'status_pengajuan' => $pinjam->status,
                 'tgl_pinjam' => $pinjam->tglpinjam,
                 'tgl_pengembalian' => $pinjam->tglpengembalian,
                 'jenispinjam' => $pinjam->jenispinjam,
                 'detail_pinjaman' => $detailPinjam,
+                'es1' => ['id' => $pinjam->es1,'name' => ucwords($pinjam->eselon1->nama)],
+                'es2' => ['id' => $pinjam->es2,'name' => ucwords($pinjam->eselon2->nama)],
+                'es3' => ['id' => $pinjam->es3,'name' => ucwords($pinjam->eselon3->nama)],
+                'es4' => ['id' => $pinjam->es4,'name' => ucwords($pinjam->eselon4->nama)],
             ];
         }
         return response()->json([
@@ -148,11 +174,13 @@ class PinjamPakaiController extends Controller
         }
         $validator = Validator::make($request->all(), [
             'nip' => 'required|exists:pegawai,nip',
-            'es1' => 'required',
-            'es2' => 'required',
-            'es3' => 'required',
-            'es4' => 'required',
+            'es1' => 'required|exists:eselon,id,nip,'.$request->nip,
+            'es2' => 'required|exists:eselon,id,nip,'.$request->nip,
+            'es3' => 'required|exists:eselon,id,nip,'.$request->nip,
+            'es4' => 'required|exists:eselon,id,nip,'.$request->nip,
             'jenispinjam' => 'required',
+            'nippenanggungjawab' => 'required',
+            'nippemakai' => 'required',
             'tglpengembalian' => 'date|required_if:jenispinjam,==,PPKO',
             'idkdrn.*' => 'required|exists:kendaraan,id',
             'kmsebelum.*' => 'required|integer',
@@ -175,6 +203,9 @@ class PinjamPakaiController extends Controller
             $pinjam->es2 = $request->es2;
             $pinjam->es3 = $request->es3;
             $pinjam->es4 = $request->es4;
+            $pinjam->nippenyetuju = null;
+            $pinjam->nippenanggungjawab = $request->nippenanggungjawab;
+            $pinjam->nippemakai = $request->nippemakai;
             $pinjam->jenispinjam = $request->jenispinjam;
             $pinjam->tglpengembalian = $request->tglpengembalian ? $request->tglpengembalian : null;
             $pinjam->save();
@@ -257,7 +288,29 @@ class PinjamPakaiController extends Controller
         $fetch = Pinjam::with('detailPinjaman.detailKendaraan')
             ->with('detailPinjaman.fotoPinjam')
             ->with('detailPinjaman.detailBbm')
-            ->select('id', 'nip', 'tglpinjam', 'es1', 'es2', 'es3', 'es4', 'jenispinjam', 'tglpengembalian')
+            ->with('eselon1')
+            ->with('eselon2')
+            ->with('eselon3')
+            ->with('eselon4')
+            ->with('penanggungJawab')
+            ->with('pemakai')
+            ->with('penyetuju')
+            ->select(
+                'id', 
+                'nip',
+                'tglpinjam',
+                'es1',
+                'es2',
+                'es3',
+                'es4',
+                'status',
+                'nippenanggungjawab',
+                'nippemakai',
+                'nippenyetuju',
+                'es4',
+                'jenispinjam',
+                'tglpengembalian'
+            )
             ->where('id', $request->id_pinjaman)
             ->first();
         if($fetch == null) {
@@ -295,10 +348,14 @@ class PinjamPakaiController extends Controller
         $data = [
             'id_pinjam' => $fetch->id,
             'nip' => $fetch->nip,
-            'es1' => ucwords($fetch->es1),
-            'es2' => ucwords($fetch->es2),
-            'es3' => ucwords($fetch->es3),
-            'es4' => ucwords($fetch->es4),
+            'es1' => ['id' => $fetch->es1,'name' => ucwords($fetch->eselon1->nama)],
+            'es2' => ['id' => $fetch->es2,'name' => ucwords($fetch->eselon2->nama)],
+            'es3' => ['id' => $fetch->es3,'name' => ucwords($fetch->eselon3->nama)],
+            'es4' => ['id' => $fetch->es4,'name' => ucwords($fetch->eselon4->nama)],
+            'penanggung_jawab' => $fetch->penanggungJawab->nama,
+            'pemakai' => $fetch->pemakai->nama,
+            'penyetuju' => $fetch->penyetuju ? $fetch->penyetuju->nama : '',
+            'status_pengajuan' => $fetch->status,
             'tgl_pinjam' => $fetch->tglpinjam,
             'tgl_pengembalian' => $fetch->tglpengembalian,
             'jenispinjam' => $fetch->jenispinjam,
@@ -343,12 +400,26 @@ class PinjamPakaiController extends Controller
         }
         $fetch = Pinjam::select('id', 'nip', 'tglpinjam', 'es1', 'es2', 'es3', 'es4', 'jenispinjam', 'tglpengembalian')
             ->where('nip', $request->nip)
+            ->with('eselon1')
+            ->with('eselon2')
+            ->with('eselon3')
+            ->with('eselon4')
             ->orderBy('created_at', 'DESC')
             ->first();
+        $response = [
+            'lastidpinjaman' => $fetch->id,
+            'nip' => $fetch->nip,
+            'tglpinjam' => $fetch->tglpinjam,
+            'jenispinjam' => $fetch->jenispinjam,
+            'es1' => ['id' => $fetch->es1,'name' => ucwords($fetch->eselon1->nama)],
+            'es2' => ['id' => $fetch->es2,'name' => ucwords($fetch->eselon2->nama)],
+            'es3' => ['id' => $fetch->es3,'name' => ucwords($fetch->eselon3->nama)],
+            'es4' => ['id' => $fetch->es4,'name' => ucwords($fetch->eselon4->nama)],
+        ];
         return response()->json([
             'status' => 'success',
             'code' => 200,
-            'data' => $fetch,
+            'data' => $response,
         ], 200);
     }
 }

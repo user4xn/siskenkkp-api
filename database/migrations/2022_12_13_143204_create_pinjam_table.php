@@ -19,11 +19,16 @@ class CreatePinjamTable extends Migration
             $table->date('tglpinjam');
             $table->date('tglpengembalian')->nullable();
             $table->enum('jenispinjam', ['KOJ', 'PPKO']);
-            $table->string('es1');
-            $table->string('es2');
-            $table->string('es3');
-            $table->string('es4');
+            $table->bigInteger('es1');
+            $table->bigInteger('es2');
+            $table->bigInteger('es3');
+            $table->bigInteger('es4');
+            $table->enum('status',['Diajukan', 'Disetujui','Ditolak']);
+            $table->string('nippenyetuju')->nullable();
+            $table->string('nippenanggungjawab');
+            $table->string('nippemakai');
             $table->timestamps();
+
         });
     }
 

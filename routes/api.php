@@ -11,6 +11,8 @@ use App\Http\Controllers\ServisController;
 use App\Http\Controllers\CronController;
 use App\Http\Controllers\BbmController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\EselonController;
+use App\Http\Controllers\ApprovalController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -56,6 +58,10 @@ Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
     Route::post('/kendaraan/update/{kendaraan_id}', [KendaraanController::class, 'update']);
     Route::delete('/kendaraan/delete/{kendaraan_id}', [KendaraanController::class, 'destroy']);
 
+    Route::get('/eselon', [EselonController::class, 'eselon']);
+    Route::post('/eselon/store', [EselonController::class, 'store']);
+    Route::delete('/eselon/delete/{id_eselon}', [EselonController::class, 'destroy']);
+
     Route::get('/options/abilities', [OptionsController::class, 'dataAbilities']);
     Route::get('/options/ability-menu', [OptionsController::class, 'dataAbilityMenu']);
     Route::get('/options/merk', [OptionsController::class, 'dataMerk']);
@@ -83,6 +89,12 @@ Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
     Route::get('/pinjam-pakai/{tipe}/cari', [PinjamPakaiController::class, 'cariPinjaman']);
     Route::post('/pinjam-pakai/{tipe}/pinjaman/store', [PinjamPakaiController::class, 'storePinjaman']);
     Route::get('/pinjam-pakai/{tipe}/lastest-record', [PinjamPakaiController::class, 'lastestRecord']);
+
+    Route::get('/approval-pinjaman', [ApprovalController::class, 'approvalPinjaman']);
+    Route::get('/approval-pinjaman/detail/{id_pinjaman}', [ApprovalController::class, 'detailApproval']);
+    Route::put('/approval-pinjaman/{id_pinjam}/approve', [ApprovalController::class, 'approvePinjaman']);
+    Route::put('/approval-pinjaman/{id_pinjam}/reject', [ApprovalController::class, 'rejectPinjaman']);
+    
     
     Route::get('/bahan-bakar', [BbmController::class, 'bbm']);
     Route::post('/bahan-bakar/store', [BbmController::class, 'storeBbm']);
