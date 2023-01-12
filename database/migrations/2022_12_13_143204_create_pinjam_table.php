@@ -25,6 +25,7 @@ class CreatePinjamTable extends Migration
             $table->bigInteger('es4');
             $table->enum('status',['Diajukan', 'Disetujui','Ditolak']);
             $table->string('nippenyetuju')->nullable();
+            $table->string('catatan')->nullable();
             $table->string('nippenanggungjawab');
             $table->string('nippemakai');
             $table->timestamps();

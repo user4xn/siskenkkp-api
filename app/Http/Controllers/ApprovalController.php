@@ -48,6 +48,7 @@ class ApprovalController extends Controller
                 'es3',
                 'es4',
                 'status',
+                'catatan',
                 'nippenanggungjawab',
                 'nippemakai',
                 'nippenyetuju',
@@ -98,6 +99,7 @@ class ApprovalController extends Controller
                 'pemakai' => $pinjam->pemakai->nama,
                 'penyetuju' => $pinjam->penyetuju ? $pinjam->penyetuju->nama : '',
                 'status_pengajuan' => $pinjam->status,
+                'catatan' => $pinjam->catatan,
                 'tgl_pinjam' => $pinjam->tglpinjam,
                 'tgl_pengembalian' => $pinjam->tglpengembalian,
                 'jenispinjam' => $pinjam->jenispinjam,
@@ -143,6 +145,7 @@ class ApprovalController extends Controller
                 'es3',
                 'es4',
                 'status',
+                'catatan',
                 'nippenanggungjawab',
                 'nippemakai',
                 'nippenyetuju',
@@ -195,6 +198,7 @@ class ApprovalController extends Controller
             'pemakai' => $fetch->pemakai->nama,
             'penyetuju' => $fetch->penyetuju ? $fetch->penyetuju->nama : '',
             'status_pengajuan' => $fetch->status,
+            'catatan' => $fetch->catatan,
             'tgl_pinjam' => $fetch->tglpinjam,
             'tgl_pengembalian' => $fetch->tglpengembalian,
             'jenispinjam' => $fetch->jenispinjam,
@@ -253,6 +257,16 @@ class ApprovalController extends Controller
                 'message' => 'Unauthorized User Ability',
             ],400);
         }
+        $validator = Validator::make($request->all(), [
+            'catatan' => 'required',
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => $validator->errors(),
+            ],400);
+        }
         DB::beginTransaction();
         try {
             $dataUser = auth()->user();
@@ -271,7 +285,8 @@ class ApprovalController extends Controller
             $nippenyetuju = $getUserDetail->userPegawai->nip;
             $update = Pinjam::where('id', $request->id_pinjam)->update([
                 'nippenyetuju' => $nippenyetuju,
-                'status' => 'Ditolak'
+                'status' => 'Ditolak',
+                'catatan' => $request->catatan
             ]);
             DB::commit();
             return response()->json([

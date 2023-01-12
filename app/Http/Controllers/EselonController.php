@@ -37,7 +37,10 @@ class EselonController extends Controller
         $limit = $request->limit ? $request->limit : 10;
         $offset = $request->offset ? $request->offset : 0;
         $fetch = Eselon::where('nip', $request->nip)
-            ->select('id', 'nip', 'nama', 'created_at')
+            ->when($request->tipe, function ($query) use ($request){
+                return $query->where('tipe', $request->tipe);
+            })
+            ->select('id', 'nip', 'nama', 'tipe', 'created_at')
             ->limit($limit)
             ->offset($offset)
             ->get();
@@ -59,6 +62,7 @@ class EselonController extends Controller
         $validator = Validator::make($request->all(), [
             'nip' => 'required|integer|exists:pegawai,nip',
             'nama' => 'required|string',
+            'tipe' => 'required|string',
         ]);
         if($validator->fails()){
             return response()->json([
@@ -80,6 +84,7 @@ class EselonController extends Controller
             $eselon = new Eselon();
             $eselon->nip = $request->nip;
             $eselon->nama = $request->nama;
+            $eselon->tipe = $request->tipe;
             $eselon->save();
 
             DB::commit();

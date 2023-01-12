@@ -11,6 +11,7 @@ class Eselon extends Model
     protected $fillable = [
         'id',
         'nip',
+        'tipe',
         'nama',
     ];
 }

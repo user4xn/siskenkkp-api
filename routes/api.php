@@ -105,8 +105,8 @@ Route::group(['middleware' => 'api','prefix' => 'v1'], function ($router) {
     Route::get('/servis/detail/{id_kendaraan}', [ServisController::class, 'detailServis']);
     Route::post('/servis/store', [ServisController::class, 'storeServis']);
 
-    Route::get('/report/pinjam-pakai', [ReportController::class, 'pinjamPakai']);
-    Route::get('/report/pinjam-pakai/{id_pinjaman}/report', [ReportController::class, 'reportPinjamPakai']);
+    Route::get('/report/pinjam-pakai/{tipe}', [ReportController::class, 'pinjamPakai']);
+    Route::get('/report/pinjam-pakai/{tipe}/{id_pinjaman}/report', [ReportController::class, 'reportPinjamPakai']);
 });
 
 Route::group(['middleware' => 'api','prefix' => 'v2'], function ($router) {

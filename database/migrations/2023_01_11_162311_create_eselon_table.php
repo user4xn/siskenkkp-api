@@ -16,6 +16,7 @@ class CreateEselonTable extends Migration
         Schema::create('eselon', function (Blueprint $table) {
             $table->id();
             $table->string('nip');
+            $table->enum('tipe',['es1', 'es2', 'es3', 'es4']);
             $table->string('nama');
             $table->timestamps();
         });

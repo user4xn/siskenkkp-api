@@ -15,13 +15,24 @@ class ReportController extends Controller
     }
 
     public function pinjamPakai (Request $request) {
-        $checkAbility = (new AuthController)->checkAbility('Laporan Pinjam Pakai', 'View');
-        if(!$checkAbility){
-            return response()->json([
-                'status' => 'failed',
-                'code' => 400,
-                'message' => 'Unauthorized User Ability',
-            ],400);
+        if($request->tipe == 'ppko'){
+            $checkAbility = (new AuthController)->checkAbility('Laporan Pinjam Pakai', 'View');
+            if(!$checkAbility){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Unauthorized User Ability',
+                ],400);
+            }
+        } else {
+            $checkAbility = (new AuthController)->checkAbility('Laporan Pinjam Pakai KOJ', 'View');
+            if(!$checkAbility){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Unauthorized User Ability',
+                ],400);
+            }
         }
         $validator = Validator::make($request->all(), [
             'idkdrn' => 'integer|exists:kendaraan,id',
@@ -38,13 +49,14 @@ class ReportController extends Controller
         }
         $fetch = Pinjam::with(['detailPinjaman.kendaraan'])
             ->with('detailPegawai')
-            ->select('id', 'nip', 'tglpinjam')
+            ->select('id', 'nip', 'tglpinjam', 'catatan')
             ->when($request->start_date && $request->end_date, function ($query) use ($request){
                 return $query->whereBetween('tglpinjam', [$request->start_date, $request->end_date]);
             })
             ->when($request->nip, function ($query) use ($request) {
                 return $query->where('nip', '=', $request->nip);
             })
+            ->where('jenispinjam', $request->tipe)
             ->get();
         $response = [];
         foreach ($fetch as $pinjaman) {
@@ -58,6 +70,7 @@ class ReportController extends Controller
                             'type' => $detail->kendaraan->type ? $detail->kendaraan->type->type : false,
                             'nopolisi' => $detail->kendaraan->nopolisi,
                             'tglpinjam' => $pinjaman->tglpinjam,
+                            'catatan' => $pinjaman->catatan,
                             'penanggungjawab' => $pinjaman->detailPegawai->nama,
                             'nip' => $pinjaman->detailPegawai->nip,
                             'unit_kerja' => $pinjaman->detailPegawai->unitKerja ? $pinjaman->detailPegawai->unitKerja->unitkerja : false,
@@ -71,6 +84,7 @@ class ReportController extends Controller
                         'type' => $detail->kendaraan->type ? $detail->kendaraan->type->type : false,
                         'nopolisi' => $detail->kendaraan->nopolisi,
                         'tglpinjam' => $pinjaman->tglpinjam,
+                        'catatan' => $pinjaman->catatan,
                         'penanggungjawab' => $pinjaman->detailPegawai->nama,
                         'nip' => $pinjaman->detailPegawai->nip,
                         'unit_kerja' => $pinjaman->detailPegawai->unitKerja ? $pinjaman->detailPegawai->unitKerja->unitkerja : false,
@@ -86,18 +100,30 @@ class ReportController extends Controller
     }
 
     public function reportPinjamPakai (Request $request) {
-        $checkAbility = (new AuthController)->checkAbility('Laporan Pinjam Pakai', 'View');
-        if(!$checkAbility){
-            return response()->json([
-                'status' => 'failed',
-                'code' => 400,
-                'message' => 'Unauthorized User Ability',
-            ],400);
+        if($request->tipe == 'ppko'){
+            $checkAbility = (new AuthController)->checkAbility('Laporan Pinjam Pakai', 'View');
+            if(!$checkAbility){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Unauthorized User Ability',
+                ],400);
+            }
+        } else {
+            $checkAbility = (new AuthController)->checkAbility('Laporan Pinjam Pakai KOJ', 'View');
+            if(!$checkAbility){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Unauthorized User Ability',
+                ],400);
+            }
         }
         $fetch = Pinjam::with(['detailPinjaman.detailKendaraan'])
             ->with('detailPegawai')
             ->where('id', $request->id_pinjaman)
             ->select('id', 'nip', 'tglpinjam')
+            ->where('jenispinjam', $request->tipe)
             ->first();
         if ($fetch == null) {
             return response()->json([
@@ -127,7 +153,7 @@ class ReportController extends Controller
                 'kondisi'=> $detail->detailKendaraan->kondisi,
                 'thnkdrn'=> $detail->detailKendaraan->thnkdrn,
                 'tglpajak' => $detail->detailKendaraan->tglpajak,
-                'jatuhtempo' => '',
+                'jatuhtempo' => $detail->detailKendaraan->tglmatipajak,
                 'foto' => $detail->detailKendaraan->foto,
             ];
         }
