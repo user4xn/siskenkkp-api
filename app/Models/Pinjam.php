@@ -52,15 +52,15 @@ class Pinjam extends Model
     }
 
     public function penanggungJawab () {
-        return $this->hasOne('App\Models\pegawai', 'nip', 'nippenanggungjawab')->select('nip', 'nama');
+        return $this->hasOne('App\Models\Pegawai', 'nip', 'nippenanggungjawab')->select('nip', 'nama');
     }
 
     public function pemakai () {
-        return $this->hasOne('App\Models\pegawai', 'nip', 'nippemakai')->select('nip', 'nama');
+        return $this->hasOne('App\Models\Pegawai', 'nip', 'nippemakai')->select('nip', 'nama');
     }
 
     public function penyetuju () {
-        return $this->hasOne('App\Models\pegawai', 'nip', 'nippenyetuju')->select('nip', 'nama');
+        return $this->hasOne('App\Models\Pegawai', 'nip', 'nippenyetuju')->select('nip', 'nama');
     }
 
     
