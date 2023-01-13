@@ -131,7 +131,7 @@ class PinjamPakaiController extends Controller
             }
             $data[] = [
                 'id_pinjam' => $pinjam->id,
-                'nip' => $pinjam->nip,
+                'nip' => $pinjam->nippemakai,
                 'penanggung_jawab' => $pinjam->penanggungJawab->nama,
                 'pemakai' => $pinjam->pemakai->nama,
                 'penyetuju' => $pinjam->penyetuju ? $pinjam->penyetuju->nama : '',
@@ -353,13 +353,13 @@ class PinjamPakaiController extends Controller
         }
         $data = [
             'id_pinjam' => $fetch->id,
-            'nip' => $fetch->nip,
+            'nip' => $fetch->nippemakai,
             'es1' => ['id' => $fetch->es1,'name' => ucwords($fetch->eselon1->nama)],
             'es2' => ['id' => $fetch->es2,'name' => ucwords($fetch->eselon2->nama)],
             'es3' => ['id' => $fetch->es3,'name' => ucwords($fetch->eselon3->nama)],
             'es4' => ['id' => $fetch->es4,'name' => ucwords($fetch->eselon4->nama)],
-            'penanggung_jawab' => $fetch->penanggungJawab->nama,
-            'pemakai' => $fetch->pemakai->nama,
+            'penanggung_jawab' => $fetch->penanggungJawab ? $fetch->penanggungJawab->nama : '',
+            'pemakai' => $fetch->pemakai ? $fetch->pemakai->nama : '',
             'penyetuju' => $fetch->penyetuju ? $fetch->penyetuju->nama : '',
             'status_pengajuan' => $fetch->status,
             'tgl_pinjam' => $fetch->tglpinjam,

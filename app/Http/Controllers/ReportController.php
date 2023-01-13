@@ -49,7 +49,7 @@ class ReportController extends Controller
         }
         $fetch = Pinjam::with(['detailPinjaman.kendaraan'])
             ->with('detailPegawai')
-            ->select('id', 'nip', 'tglpinjam', 'catatan', 'jenispinjam')
+            ->select('id', 'nip', 'tglpinjam', 'catatan', 'jenispinjam', 'nippemakai')
             ->when($request->start_date && $request->end_date, function ($query) use ($request){
                 return $query->whereBetween('tglpinjam', [$request->start_date, $request->end_date]);
             })
@@ -74,7 +74,7 @@ class ReportController extends Controller
                             'jenispinjam' => $pinjaman->jenispinjam,
                             'catatan' => $pinjaman->catatan,
                             'penanggungjawab' => $pinjaman->detailPegawai->nama,
-                            'nip' => $pinjaman->detailPegawai->nip,
+                            'nip' => $pinjaman->nippemakai,
                             'unit_kerja' => $pinjaman->detailPegawai->unitKerja ? $pinjaman->detailPegawai->unitKerja->unitkerja : false,
                         ];
                     }
@@ -89,7 +89,7 @@ class ReportController extends Controller
                         'jenispinjam' => $pinjaman->jenispinjam,
                         'catatan' => $pinjaman->catatan,
                         'penanggungjawab' => $pinjaman->detailPegawai->nama,
-                        'nip' => $pinjaman->detailPegawai->nip,
+                        'nip' => $pinjaman->nippemakai,
                         'unit_kerja' => $pinjaman->detailPegawai->unitKerja ? $pinjaman->detailPegawai->unitKerja->unitkerja : false,
                     ];
                 }
@@ -125,7 +125,29 @@ class ReportController extends Controller
         $fetch = Pinjam::with(['detailPinjaman.detailKendaraan'])
             ->with('detailPegawai')
             ->where('id', $request->id_pinjaman)
-            ->select('id', 'nip', 'tglpinjam')
+            ->select(
+                'id', 
+                'nip',
+                'tglpinjam',
+                'es1',
+                'es2',
+                'es3',
+                'es4',
+                'status',
+                'nippenanggungjawab',
+                'nippemakai',
+                'nippenyetuju',
+                'es4',
+                'jenispinjam',
+                'tglpengembalian'
+            )
+            ->with('eselon1')
+            ->with('eselon2')
+            ->with('eselon3')
+            ->with('eselon4')
+            ->with('penanggungJawab')
+            ->with('pemakai')
+            ->with('penyetuju')
             ->where('jenispinjam', $request->tipe)
             ->first();
         if ($fetch == null) {
@@ -139,8 +161,9 @@ class ReportController extends Controller
         foreach ($fetch->detailPinjaman as $detail) {
             $response = [
                 'id' => $fetch->id,
-                'nama' => $fetch->detailPegawai->nama,
-                'nip' => $fetch->nip,
+                'nama' => $fetch->pemakai->nama,
+                'nip' => $fetch->nippemakai,
+                'catatan' => $fetch->catatan,
                 'jabatan' => $fetch->detailPegawai->jabatan->namajabatan,
                 'unitkerja' => $fetch->detailPegawai->unitKerja->unitkerja,
                 'idkdrn'=> $detail->detailKendaraan->id,
@@ -158,6 +181,13 @@ class ReportController extends Controller
                 'tglpajak' => $detail->detailKendaraan->tglpajak,
                 'jatuhtempo' => $detail->detailKendaraan->tglmatipajak,
                 'foto' => $detail->detailKendaraan->foto,
+                'es1' => ['id' => $fetch->es1,'name' => ucwords($fetch->eselon1->nama)],
+                'es2' => ['id' => $fetch->es2,'name' => ucwords($fetch->eselon2->nama)],
+                'es3' => ['id' => $fetch->es3,'name' => ucwords($fetch->eselon3->nama)],
+                'es4' => ['id' => $fetch->es4,'name' => ucwords($fetch->eselon4->nama)],
+                'penanggung_jawab' => $fetch->penanggungJawab ? $fetch->penanggungJawab->nama : '',
+                'pemakai' => $fetch->pemakai ? $fetch->pemakai->nama : '',
+                'penyetuju' => $fetch->penyetuju ? $fetch->penyetuju->nama : '',
             ];
         }
         return response()->json([
