@@ -56,6 +56,7 @@ class ReportController extends Controller
             ->when($request->nip, function ($query) use ($request) {
                 return $query->where('nip', '=', $request->nip);
             })
+            ->with('pemakai')
             ->where('jenispinjam', $request->tipe)
             ->where('status', 'Disetujui')
             ->get();
@@ -73,8 +74,8 @@ class ReportController extends Controller
                             'tglpinjam' => $pinjaman->tglpinjam,
                             'jenispinjam' => $pinjaman->jenispinjam,
                             'catatan' => $pinjaman->catatan,
-                            'penanggungjawab' => $pinjaman->detailPegawai->nama,
-                            'nip' => $pinjaman->nippemakai,
+                            'penanggungjawab' => $pinjaman->nip.' - '.$pinjaman->detailPegawai->nama,
+                            'pemakai' => $pinjaman->nippemakai.' - '.$pinjaman->pemakai->nama,
                             'unit_kerja' => $pinjaman->detailPegawai->unitKerja ? $pinjaman->detailPegawai->unitKerja->unitkerja : false,
                         ];
                     }
@@ -88,8 +89,8 @@ class ReportController extends Controller
                         'tglpinjam' => $pinjaman->tglpinjam,
                         'jenispinjam' => $pinjaman->jenispinjam,
                         'catatan' => $pinjaman->catatan,
-                        'penanggungjawab' => $pinjaman->detailPegawai->nama,
-                        'nip' => $pinjaman->nippemakai,
+                        'penanggungjawab' => $pinjaman->nip.' - '.$pinjaman->detailPegawai->nama,
+                        'pemakai' => $pinjaman->nippemakai.' - '.$pinjaman->pemakai->nama,
                         'unit_kerja' => $pinjaman->detailPegawai->unitKerja ? $pinjaman->detailPegawai->unitKerja->unitkerja : false,
                     ];
                 }
@@ -161,8 +162,9 @@ class ReportController extends Controller
         foreach ($fetch->detailPinjaman as $detail) {
             $response = [
                 'id' => $fetch->id,
-                'nama' => $fetch->pemakai->nama,
-                'nip' => $fetch->nippemakai,
+                'nama' => $fetch->detailPegawai->nama,
+                'nippemakai' => $fetch->nippemakai,
+                'nippenanggungjawab' => $fetch->nippenanggungjawab,
                 'catatan' => $fetch->catatan,
                 'jabatan' => $fetch->detailPegawai->jabatan->namajabatan,
                 'unitkerja' => $fetch->detailPegawai->unitKerja->unitkerja,

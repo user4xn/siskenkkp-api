@@ -70,7 +70,7 @@ class ApprovalController extends Controller
                 return $query->where('status', $request->status);
             })
             ->when(!$request->status, function ($query) use ($request){
-                return $query->where('status', 'Diajukan')->orWhere('status', 'Ditolak');
+                return $query->where('status', 'Diajukan');
             })
             ->orderBy('pinjam.created_at', 'DESC')
             ->get();
