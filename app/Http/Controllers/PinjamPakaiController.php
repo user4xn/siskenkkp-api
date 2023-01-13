@@ -180,6 +180,7 @@ class PinjamPakaiController extends Controller
             'es3' => 'required|exists:eselon,id,nip,'.$request->nip,
             'es4' => 'required|exists:eselon,id,nip,'.$request->nip,
             'jenispinjam' => 'required',
+            'nip' => 'required',
             'nippenanggungjawab' => 'required',
             'nippemakai' => 'required',
             'tglpengembalian' => 'date|required_if:jenispinjam,==,PPKO',
