@@ -69,6 +69,9 @@ class ApprovalController extends Controller
             ->when($request->status, function ($query) use ($request){
                 return $query->where('status', $request->status);
             })
+            ->when(!$request->status, function ($query) use ($request){
+                return $query->where('status', 'Diajukan')->orWhere('status', 'Ditolak');
+            })
             ->orderBy('pinjam.created_at', 'DESC')
             ->get();
         $data = [];
