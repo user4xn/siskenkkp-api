@@ -105,6 +105,7 @@ class PinjamPakaiController extends Controller
             ->when($request->start_date && $request->end_date, function ($query) use ($request){
                 return $query->whereBetween('tglpinjam', [$request->start_date, $request->end_date]);
             })
+            ->orderBy('pinjam.created_at', 'DESC')
             ->get();
         $data = [];
         foreach ($fetch as $pinjam) {
