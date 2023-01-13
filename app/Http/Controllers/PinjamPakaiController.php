@@ -220,6 +220,11 @@ class PinjamPakaiController extends Controller
                         'message' => 'canceled, id kendaraan '.$request->idkdrn[$n].' is not available',
                     ], 400);
                 }
+                if($checkStatusKendaraan->jaraktempuh < $request->kmsebelum[$n]) {
+                    Kendaraan::where('id', $request->idkdrn[$n])->update([
+                        'jaraktempuh' => $request->kmsebelum[$n]
+                    ]);
+                }
                 $detailPinjam = new DetailPinjam();
                 $detailPinjam->idpinjam = $pinjam->id;
                 $detailPinjam->idkdrn = $request->idkdrn[$n];

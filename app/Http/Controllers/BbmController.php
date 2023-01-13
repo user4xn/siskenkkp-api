@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Pinjam;
+use App\Models\DetailPinjam;
 use App\Models\Bbm;
+use App\Models\Kendaraan;
 use App\Http\Controllers\AuthController;
 use Validator;
 
@@ -90,6 +92,13 @@ class BbmController extends Controller
                 'code' => 400,
                 'message' => $validator->errors(),
             ],400);
+        }
+        $detailPinjam = DetailPinjam::where('id', $request->iddetailpinjam)->first();
+        $getKendaraan = Kendaraan::where('id', $detailPinjam->idkdrn)->first();
+        if($getKendaraan->jaraktempuh < $request->kmsesudah) {
+            Kendaraan::where('id', $detailPinjam->idkdrn)->update([
+                'jaraktempuh' => $request->kmsesudah
+            ]);
         }
         DB::beginTransaction();
         try {

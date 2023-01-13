@@ -87,6 +87,12 @@ class ServisController extends Controller
             $servis->jaraktempuh = $request->jaraktempuh;
             $servis->nmbengkel = $request->nmbengkel;
             $servis->save();
+            $getKendaraan = Kendaraan::where('id', $request->idkdrn)->first();
+            if($getKendaraan->jaraktempuh < $request->jaraktempuh) {
+                Kendaraan::where('id', $request->idkdrn)->update([
+                    'jaraktempuh' => $request->jaraktempuh
+                ]);
+            }
             for($n=0; $n < count($request->detail_servis) ; $n++) {
                 $detailServis = new DetailServis();
                 $detailServis->idservis = $servis->id;

@@ -49,7 +49,7 @@ class ReportController extends Controller
         }
         $fetch = Pinjam::with(['detailPinjaman.kendaraan'])
             ->with('detailPegawai')
-            ->select('id', 'nip', 'tglpinjam', 'catatan')
+            ->select('id', 'nip', 'tglpinjam', 'catatan', 'jenispinjam')
             ->when($request->start_date && $request->end_date, function ($query) use ($request){
                 return $query->whereBetween('tglpinjam', [$request->start_date, $request->end_date]);
             })
@@ -71,6 +71,7 @@ class ReportController extends Controller
                             'type' => $detail->kendaraan->type ? $detail->kendaraan->type->type : false,
                             'nopolisi' => $detail->kendaraan->nopolisi,
                             'tglpinjam' => $pinjaman->tglpinjam,
+                            'jenispinjam' => $pinjaman->jenispinjam,
                             'catatan' => $pinjaman->catatan,
                             'penanggungjawab' => $pinjaman->detailPegawai->nama,
                             'nip' => $pinjaman->detailPegawai->nip,
@@ -85,6 +86,7 @@ class ReportController extends Controller
                         'type' => $detail->kendaraan->type ? $detail->kendaraan->type->type : false,
                         'nopolisi' => $detail->kendaraan->nopolisi,
                         'tglpinjam' => $pinjaman->tglpinjam,
+                        'jenispinjam' => $pinjaman->jenispinjam,
                         'catatan' => $pinjaman->catatan,
                         'penanggungjawab' => $pinjaman->detailPegawai->nama,
                         'nip' => $pinjaman->detailPegawai->nip,

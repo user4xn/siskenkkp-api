@@ -73,6 +73,7 @@ class KendaraanController extends Controller
                 'nopolisi' => $kendaraan->nopolisi,
                 'warna' => $kendaraan->warna,
                 'status' => $kendaraan->status,
+                'jaraktempuh' => $kendaraan->jaraktempuh,
             ];
         }
         return response()->json([
