@@ -101,6 +101,7 @@ class PinjamPakaiController extends Controller
             ->with('penanggungJawab')
             ->with('pemakai')
             ->with('penyetuju')
+            ->where('status', 'Disetujui')
             ->where('jenispinjam', strtoupper($request->tipe))
             ->when($request->start_date && $request->end_date, function ($query) use ($request){
                 return $query->whereBetween('tglpinjam', [$request->start_date, $request->end_date]);
