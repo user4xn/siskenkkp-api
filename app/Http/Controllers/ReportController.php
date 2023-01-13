@@ -57,6 +57,7 @@ class ReportController extends Controller
                 return $query->where('nip', '=', $request->nip);
             })
             ->where('jenispinjam', $request->tipe)
+            ->where('status', 'Disetujui')
             ->get();
         $response = [];
         foreach ($fetch as $pinjaman) {
