@@ -69,6 +69,7 @@ class ApprovalController extends Controller
             ->when($request->status, function ($query) use ($request){
                 return $query->where('status', $request->status);
             })
+            ->orderBy('tglpinjam', 'DESC')
             ->get();
         $data = [];
         foreach ($fetch as $pinjam) {
