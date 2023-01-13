@@ -186,7 +186,7 @@ class PinjamPakaiController extends Controller
             'tglpengembalian' => 'date|required_if:jenispinjam,==,PPKO',
             'idkdrn.*' => 'required|exists:kendaraan,id',
             'kmsebelum.*' => 'required|integer',
-            'nomorsk' => 'required_if:jenispinjam,==,KOJ',
+            'nomorsk.*' => 'required_if:jenispinjam,==,KOJ',
             'foto.*.*' => 'mimes:jpg,jpeg,png,svg,webp|max:10240'
         ]);
         if($validator->fails()){
