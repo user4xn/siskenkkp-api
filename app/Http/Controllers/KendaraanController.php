@@ -73,6 +73,7 @@ class KendaraanController extends Controller
                 'nopolisi' => $kendaraan->nopolisi,
                 'warna' => $kendaraan->warna,
                 'status' => $kendaraan->status,
+                'jenisbbm' => $kendaraan->jenisbbm,
                 'jaraktempuh' => $kendaraan->jaraktempuh,
             ];
         }
@@ -121,6 +122,7 @@ class KendaraanController extends Controller
             'thnkdrn' => $fetch->thnkdrn,
             'warna' => $fetch->warna,
             'status' => $fetch->status,
+            'jenisbbm' => $fetch->jenisbbm,
             'kondisi' => $fetch->kondisi,
             'jaraktempuh' => $fetch->jaraktempuh,
             'tglpajak' => $fetch->tglpajak,
@@ -151,6 +153,7 @@ class KendaraanController extends Controller
             'norangka' => 'required|string|unique:kendaraan',
             'nopolisi' => 'required|string|unique:kendaraan',
             'thnkdrn' => 'required',
+            'jenisbbm' => 'required',
             'tglpajak' => 'required|date',
             'tglmatipajak' => 'required|date',
             'idmerk' => 'required|integer|exists:merk_kendaraan,id',
@@ -175,6 +178,7 @@ class KendaraanController extends Controller
             $kendaraan->norangka = $request->norangka;
             $kendaraan->nopolisi = $request->nopolisi;
             $kendaraan->thnkdrn = $request->thnkdrn;
+            $kendaraan->jenisbbm = $request->jenisbbm;
             $kendaraan->tglpajak = $request->tglpajak;
             $kendaraan->tglmatipajak = $request->tglmatipajak;
             $kendaraan->jaraktempuh = $request->jaraktempuh;
@@ -236,6 +240,7 @@ class KendaraanController extends Controller
             'nomesin' => 'required|string|unique:kendaraan,nomesin,'.$request->kendaraan_id,
             'norangka' => 'required|string|unique:kendaraan,norangka,'.$request->kendaraan_id,
             'nopolisi' => 'required|string|unique:kendaraan,nopolisi,'.$request->kendaraan_id,
+            'jenisbbm' => 'required',
             'tglpajak' => 'required|date',
             'tglmatipajak' => 'required|date',
             'idmerk' => 'required|integer|exists:merk_kendaraan,id',
@@ -273,6 +278,7 @@ class KendaraanController extends Controller
                 'idmerkkdrn' => $request->idmerk,
                 'warna' => $request->warna,
                 'status' => $request->status,
+                'jenisbbm' => $request->jenisbbm,
                 'kondisi' => $request->kondisi,
             ]);
             $images = $request->file('foto_insert');

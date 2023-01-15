@@ -138,8 +138,8 @@ class PinjamPakaiController extends Controller
             $data[] = [
                 'id_pinjam' => $pinjam->id,
                 'nip' => $pinjam->nippemakai,
-                'penanggung_jawab' => $pinjam->penanggungJawab->nama,
-                'pemakai' => $pinjam->pemakai->nama,
+                'penanggung_jawab' => $pinjam->penanggungJawab ? $pinjam->penanggungJawab->nama : '',
+                'pemakai' => $pinjam->pemakai ? $pinjam->pemakai->nama : '',
                 'penyetuju' => $pinjam->penyetuju ? $pinjam->penyetuju->nama : '',
                 'status_pengajuan' => $pinjam->status,
                 'catatan_tolak' => $pinjam->catatan,
@@ -348,6 +348,7 @@ class PinjamPakaiController extends Controller
                 'norangka' => $dpj->detailKendaraan->norangka,
                 'nopolisi' => $dpj->detailKendaraan->nopolisi,
                 'thnkdrn' => $dpj->detailKendaraan->thnkdrn,
+                'jenisbbm' => $dpj->detailKendaraan->jenisbbm,
                 'tglpajak' => $dpj->detailKendaraan->tglpajak,
                 'tglmatipajak' => $dpj->detailKendaraan->tglmatipajak,
                 'merk' => $dpj->detailKendaraan->merk ? $dpj->detailKendaraan->merk->merk : false,

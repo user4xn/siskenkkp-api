@@ -23,6 +23,7 @@ class Kendaraan extends Model
         'idmerkkdrn',
         'warna',
         'status',
+        'jenisbbm',
         'kondisi',
     ];
 

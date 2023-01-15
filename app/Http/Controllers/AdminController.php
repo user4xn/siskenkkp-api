@@ -214,12 +214,40 @@ class AdminController extends Controller
                 'message' => $validator->errors(),
             ],400);
         }
+        $limit = $request->limit ? $request->limit : 50;
+        $offset = $request->offset ? $request->offset : 0;
         $fetch = Pinjam::with(['detailPinjaman.kendaraan'])
-            ->select('id', 'nip', 'tglpinjam', 'es1', 'es2', 'es3', 'es4', 'jenispinjam', 'tglpengembalian')
+            ->select(
+                'id', 
+                'nip',
+                'tglpinjam',
+                'es1',
+                'es2',
+                'es3',
+                'es4',
+                'status',
+                'catatan',
+                'nippenanggungjawab',
+                'nippemakai',
+                'nippenyetuju',
+                'es4',
+                'jenispinjam',
+                'tglpengembalian'
+            )
+            ->with('eselon1')
+            ->with('eselon2')
+            ->with('eselon3')
+            ->with('eselon4')
+            ->with('penanggungJawab')
+            ->with('pemakai')
+            ->with('penyetuju')
             ->where('jenispinjam', strtoupper($request->tipe))
             ->when($request->start_date && $request->end_date, function ($query) use ($request){
                 return $query->whereBetween('tglpinjam', [$request->start_date, $request->end_date]);
             })
+            ->orderBy('pinjam.created_at', 'DESC')
+            ->limit($limit)
+            ->offset($offset)
             ->get();
         $data = [];
         foreach ($fetch as $pinjam) {
@@ -246,10 +274,15 @@ class AdminController extends Controller
             $data[] = [
                 'id_pinjam' => $pinjam->id,
                 'nip' => $pinjam->nip,
-                'es1' => ucwords($pinjam->es1),
-                'es2' => ucwords($pinjam->es2),
-                'es3' => ucwords($pinjam->es3),
-                'es4' => ucwords($pinjam->es4),
+                'penanggung_jawab' => $pinjam->penanggungJawab ? $pinjam->penanggungJawab->nama : '',
+                'pemakai' => $pinjam->pemakai ? $pinjam->pemakai->nama : '',
+                'penyetuju' => $pinjam->penyetuju ? $pinjam->penyetuju->nama : '',
+                'status_pengajuan' => $pinjam->status,
+                'catatan_tolak' => $pinjam->catatan,
+                'es1' => ['id' => $pinjam->es1,'name' => ucwords($pinjam->eselon1->nama)],
+                'es2' => ['id' => $pinjam->es2,'name' => ucwords($pinjam->eselon2->nama)],
+                'es3' => ['id' => $pinjam->es3,'name' => ucwords($pinjam->eselon3->nama)],
+                'es4' => ['id' => $pinjam->es4,'name' => ucwords($pinjam->eselon4->nama)],
                 'tgl_pinjam' => $pinjam->tglpinjam,
                 'tgl_pengembalian' => $pinjam->tglpengembalian,
                 'jenispinjam' => $pinjam->jenispinjam,

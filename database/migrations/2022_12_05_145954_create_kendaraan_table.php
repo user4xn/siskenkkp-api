@@ -29,6 +29,7 @@ class CreateKendaraanTable extends Migration
             $table->string('warna');
             $table->string('kondisi');
             $table->enum('status', ['Tersedia', 'Dipinjam', 'Tidak Tersedia'])->default('Tersedia');
+            $table->enum('jenisbbm', ['Bensin', 'Solar']);
             $table->timestamps();
         });
     }

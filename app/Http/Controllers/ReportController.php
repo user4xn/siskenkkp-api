@@ -176,7 +176,7 @@ class ReportController extends Controller
                 'jenis' => $detail->detailKendaraan->jenis ? $detail->detailKendaraan->jenis->jenis : false,
                 'merk' => $detail->detailKendaraan->merk ? $detail->detailKendaraan->merk->merk : false,
                 'type' => $detail->detailKendaraan->type ? $detail->detailKendaraan->type->type : false,
-                'bahanbakar' => '',
+                'bahanbakar' => $detail->detailKendaraan->jenisbbm,
                 'nobpkb'=> $detail->detailKendaraan->nobpkb,
                 'nomesin'=> $detail->detailKendaraan->nomesin,
                 'norangka'=> $detail->detailKendaraan->norangka,
