@@ -34,7 +34,7 @@ class EselonController extends Controller
                 'message' => 'Unauthorized User Ability',
             ],400);
         }
-        $limit = $request->limit ? $request->limit : 10;
+        $limit = $request->limit ? $request->limit : 50;
         $offset = $request->offset ? $request->offset : 0;
         $fetch = Eselon::where('nip', $request->nip)
             ->when($request->tipe, function ($query) use ($request){

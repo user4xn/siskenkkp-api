@@ -47,6 +47,8 @@ class ReportController extends Controller
                 'message' => $validator->errors(),
             ],400);
         }
+        $limit = $request->limit ? $request->limit : 50;
+        $offset = $request->offset ? $request->offset : 0;
         $fetch = Pinjam::with(['detailPinjaman.kendaraan'])
             ->with('detailPegawai')
             ->select('id', 'nip', 'tglpinjam', 'catatan', 'jenispinjam', 'nippemakai')
@@ -59,6 +61,8 @@ class ReportController extends Controller
             ->with('pemakai')
             ->where('jenispinjam', $request->tipe)
             ->where('status', 'Disetujui')
+            ->limit($limit)
+            ->offset($offset)
             ->get();
         $response = [];
         foreach ($fetch as $pinjaman) {
