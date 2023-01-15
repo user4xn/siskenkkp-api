@@ -44,7 +44,7 @@ class OptionsController extends Controller
         ], 200);
     }
 
-    public function dataMerk () {
+    public function dataMerk (Request $request) {
         $limit = $request->limit ? $request->limit : 50;
         $offset = $request->offset ? $request->offset : 0;
         $fetch = MerkKendaraan::limit($limit)->offset($offset)->get();
@@ -116,7 +116,7 @@ class OptionsController extends Controller
         }
     }
 
-    public function dataType () {
+    public function dataType (Request $request) {
         $limit = $request->limit ? $request->limit : 50;
         $offset = $request->offset ? $request->offset : 0;
         $fetch = TypeKendaraan::limit($limit)->offset($offset)->get();
@@ -188,7 +188,7 @@ class OptionsController extends Controller
         }
     }
 
-    public function dataJenis () {
+    public function dataJenis (Request $request) {
         $limit = $request->limit ? $request->limit : 50;
         $offset = $request->offset ? $request->offset : 0;
         $fetch = JenisKendaraan::limit($limit)->offset($offset)->get();
@@ -260,7 +260,7 @@ class OptionsController extends Controller
         }
     }
 
-    public function dataUnitKerja () {
+    public function dataUnitKerja (Request $request) {
         $limit = $request->limit ? $request->limit : 50;
         $offset = $request->offset ? $request->offset : 0;
         $fetch = UnitKerja::limit($limit)->offset($offset)->get();
@@ -332,7 +332,7 @@ class OptionsController extends Controller
         }
     }
 
-    public function dataJabatan () {
+    public function dataJabatan (Request $request) {
         $limit = $request->limit ? $request->limit : 50;
         $offset = $request->offset ? $request->offset : 0;
         $fetch = Jabatan::limit($limit)->offset($offset)->get();
@@ -404,7 +404,7 @@ class OptionsController extends Controller
         }
     }
 
-    public function dataJenisServis () {
+    public function dataJenisServis (Request $request) {
         $limit = $request->limit ? $request->limit : 50;
         $offset = $request->offset ? $request->offset : 0;
         $fetch = JenisServis::limit($limit)->offset($offset)->get();
