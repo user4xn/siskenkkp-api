@@ -8,6 +8,7 @@ use App\Models\Abilities;
 use App\Models\AbilityMenu;
 use App\Models\UserAbility;
 use App\Models\Pegawai;
+use App\Models\Pinjam;
 use App\Models\UnitKerja;
 use App\Models\Jabatan;
 use App\Models\UserPegawai;
@@ -337,6 +338,18 @@ class PegawaiController extends Controller
                     'code' => 400,
                     'message' => 'Invalid User ID',
                 ], 400);
+            }
+        $check = Pinjam::where('nip', $userPegawai->nip)
+            ->orWhere('nippemakai', $userPegawai->nip)
+            ->orWhere('nippenanggungjawab', $userPegawai->nip)
+            ->orWhere('nippenyetuju', $userPegawai->nip)
+            ->count();
+            if($check > 0){
+                return response()->json([
+                    'status' => 'failed',
+                    'code' => 400,
+                    'message' => 'Failed, Data Used',
+                ], 400); 
             }
             $user = new User();
             $deletePegawai = $user->deleteAll($request->user_id, $userPegawai->nip);
