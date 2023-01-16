@@ -94,7 +94,7 @@ class ReportController extends Controller
                         'jenispinjam' => $pinjaman->jenispinjam,
                         'catatan' => $pinjaman->catatan,
                         'penanggungjawab' => $pinjaman->nip.' - '.$pinjaman->detailPegawai->nama,
-                        'pemakai' => $pinjaman->nippemakai.' - '.$pinjaman->pemakai->nama,
+                        'pemakai' => $pinjaman->nippemakai.' - '.$pinjaman->pemakai ? $pinjaman->pemakai->nama : false,
                         'unit_kerja' => $pinjaman->detailPegawai->unitKerja ? $pinjaman->detailPegawai->unitKerja->unitkerja : false,
                     ];
                 }
