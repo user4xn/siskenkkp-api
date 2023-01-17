@@ -26,7 +26,7 @@ class EselonController extends Controller
                 'message' => $validator->errors(),
             ],400);
         }
-        $checkAbility = (new AuthController)->checkAbility('Data Eselon', 'View');
+        $checkAbility = (new AuthController)->checkAbility('Data Unit Eselon', 'View');
         if(!$checkAbility){
             return response()->json([
                 'status' => 'failed',
@@ -71,7 +71,7 @@ class EselonController extends Controller
                 'message' => $validator->errors(),
             ],400);
         }
-        $checkAbility = (new AuthController)->checkAbility('Data Eselon', 'Create');
+        $checkAbility = (new AuthController)->checkAbility('Data Unit Eselon', 'Create');
         if(!$checkAbility){
             return response()->json([
                 'status' => 'failed',
@@ -104,7 +104,7 @@ class EselonController extends Controller
     }
 
     public function destroy (Request $request) {
-        $checkAbility = (new AuthController)->checkAbility('Data Eselon', 'Delete');
+        $checkAbility = (new AuthController)->checkAbility('Data Unit Eselon', 'Delete');
         if(!$checkAbility){
             return response()->json([
                 'status' => 'failed',
