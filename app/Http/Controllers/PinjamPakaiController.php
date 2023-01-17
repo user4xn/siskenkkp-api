@@ -376,7 +376,7 @@ class PinjamPakaiController extends Controller
             'jenispinjam' => $fetch->jenispinjam,
             'detail_pinjaman' => $detailPinjam,
         ];
-        return $data;
+        
         return response()->json([
             'status' => 'success',
             'code' => 200,
