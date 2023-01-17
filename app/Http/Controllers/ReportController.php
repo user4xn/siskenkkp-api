@@ -51,7 +51,7 @@ class ReportController extends Controller
         $offset = $request->offset ? $request->offset : 0;
         $fetch = Pinjam::with(['detailPinjaman.kendaraan'])
             ->with('detailPegawai')
-            ->select('id', 'nip', 'tglpinjam', 'catatan', 'jenispinjam', 'nippemakai')
+            ->select('id', 'nip', 'tglpinjam', 'tglpengembalian', 'catatan', 'jenispinjam', 'nippemakai')
             ->when($request->start_date && $request->end_date, function ($query) use ($request){
                 return $query->whereBetween('tglpinjam', [$request->start_date, $request->end_date]);
             })
@@ -76,6 +76,7 @@ class ReportController extends Controller
                             'type' => $detail->kendaraan->type ? $detail->kendaraan->type->type : false,
                             'nopolisi' => $detail->kendaraan->nopolisi,
                             'tglpinjam' => $pinjaman->tglpinjam,
+                            'tglpengembalian' => $pinjaman->tglpengembalian,
                             'jenispinjam' => $pinjaman->jenispinjam,
                             'catatan' => $pinjaman->catatan,
                             'penanggungjawab' => $pinjaman->nip.' - '.$pinjaman->detailPegawai->nama,
@@ -91,6 +92,7 @@ class ReportController extends Controller
                         'type' => $detail->kendaraan->type ? $detail->kendaraan->type->type : false,
                         'nopolisi' => $detail->kendaraan->nopolisi,
                         'tglpinjam' => $pinjaman->tglpinjam,
+                        'tglpengembalian' => $pinjaman->tglpengembalian,
                         'jenispinjam' => $pinjaman->jenispinjam,
                         'catatan' => $pinjaman->catatan,
                         'penanggungjawab' => $pinjaman->nip.' - '.$pinjaman->detailPegawai->nama,
@@ -134,6 +136,7 @@ class ReportController extends Controller
                 'id', 
                 'nip',
                 'tglpinjam',
+                'tglpengembalian',
                 'es1',
                 'es2',
                 'es3',
