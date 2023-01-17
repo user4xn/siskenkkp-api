@@ -367,15 +367,16 @@ class PinjamPakaiController extends Controller
             'es2' => ['id' => $fetch->es2,'name' => ucwords($fetch->eselon2->nama)],
             'es3' => ['id' => $fetch->es3,'name' => ucwords($fetch->eselon3->nama)],
             'es4' => ['id' => $fetch->es4,'name' => ucwords($fetch->eselon4->nama)],
-            'penanggung_jawab' => $fetch->penanggungJawab ? $fetch->penanggungJawab->nama : '',
-            'pemakai' => $fetch->pemakai ? $fetch->pemakai->nama : '',
-            'penyetuju' => $fetch->penyetuju ? $fetch->penyetuju->nama : '',
+            'penanggung_jawab' => $fetch->penanggungJawab ? $fetch->nippenanggungjawab.' - '.$fetch->penanggungJawab->nama : '',
+            'pemakai' => $fetch->pemakai ? $fetch->nippemakai.' - '.$fetch->pemakai->nama : '',
+            'penyetuju' => $fetch->nippenyetuju.' - '.$fetch->penyetuju ? $fetch->nippenyetuju.' - '.$fetch->penyetuju->nama : '',
             'status_pengajuan' => $fetch->status,
             'tgl_pinjam' => $fetch->tglpinjam,
             'tgl_pengembalian' => $fetch->tglpengembalian,
             'jenispinjam' => $fetch->jenispinjam,
             'detail_pinjaman' => $detailPinjam,
         ];
+        return $data;
         return response()->json([
             'status' => 'success',
             'code' => 200,
