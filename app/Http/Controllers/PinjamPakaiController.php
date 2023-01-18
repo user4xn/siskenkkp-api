@@ -424,6 +424,13 @@ class PinjamPakaiController extends Controller
             ->with('eselon4')
             ->orderBy('created_at', 'DESC')
             ->first();
+        if ($fetch == null) {
+            return response()->json([
+                'status' => 'success',
+                'code' => 200,
+                'data' => [],
+            ], 200);
+        }
         $response = [
             'lastidpinjaman' => $fetch->id,
             'nip' => $fetch->nip,
