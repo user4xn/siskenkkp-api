@@ -17,7 +17,7 @@ class EselonController extends Controller
 
     public function eselon (Request $request) {
         $validator = Validator::make($request->all(), [
-            'nip' => 'required|integer|exists:pegawai,nip',
+            'nip' => 'required|exists:pegawai,nip',
         ]);
         if($validator->fails()){
             return response()->json([
