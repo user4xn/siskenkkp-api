@@ -34,15 +34,11 @@ class EselonController extends Controller
                 'message' => 'Unauthorized User Ability',
             ],400);
         }
-        $limit = $request->limit ? $request->limit : 50;
-        $offset = $request->offset ? $request->offset : 0;
         $fetch = Eselon::where('nip', $request->nip)
             ->when($request->tipe, function ($query) use ($request){
                 return $query->where('tipe', $request->tipe);
             })
             ->select('id', 'nip', 'nama', 'tipe', 'created_at')
-            ->limit($limit)
-            ->offset($offset)
             ->get();
         if (count($fetch) < 1) {
             return response()->json([
@@ -60,7 +56,7 @@ class EselonController extends Controller
 
     public function store (Request $request) {
         $validator = Validator::make($request->all(), [
-            'nip' => 'required|integer|exists:pegawai,nip',
+            'nip' => 'required|exists:pegawai,nip',
             'nama' => 'required|string',
             'tipe' => 'required|string',
         ]);

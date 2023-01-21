@@ -31,8 +31,6 @@ class PegawaiController extends Controller
                 'message' => 'Unauthorized User Ability',
             ],400);
         }
-        $limit = $request->limit ? $request->limit : 50;
-        $offset = $request->offset ? $request->offset : 0;
         if($request->search){
             $request->idbiro = null;
             $request->idjabatan = null;
@@ -54,8 +52,6 @@ class PegawaiController extends Controller
                 return $query->where('nama', 'LIKE', '%'.$request->search.'%')
                     ->orwhere('nip', 'LIKE', '%'.$request->search.'%');
             })
-            ->limit($limit)
-            ->offset($offset)
             ->get();
         if (count($fetch) < 1) {
             return response()->json([

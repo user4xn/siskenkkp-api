@@ -45,9 +45,7 @@ class OptionsController extends Controller
     }
 
     public function dataMerk (Request $request) {
-        $limit = $request->limit ? $request->limit : 50;
-        $offset = $request->offset ? $request->offset : 0;
-        $fetch = MerkKendaraan::limit($limit)->offset($offset)->get();
+        $fetch = MerkKendaraan::all();
         return response()->json([
             'status' => 'success',
             'code' => 200,
@@ -117,9 +115,7 @@ class OptionsController extends Controller
     }
 
     public function dataType (Request $request) {
-        $limit = $request->limit ? $request->limit : 50;
-        $offset = $request->offset ? $request->offset : 0;
-        $fetch = TypeKendaraan::limit($limit)->offset($offset)->get();
+        $fetch = TypeKendaraan::all();
         return response()->json([
             'status' => 'success',
             'code' => 200,
@@ -189,9 +185,7 @@ class OptionsController extends Controller
     }
 
     public function dataJenis (Request $request) {
-        $limit = $request->limit ? $request->limit : 50;
-        $offset = $request->offset ? $request->offset : 0;
-        $fetch = JenisKendaraan::limit($limit)->offset($offset)->get();
+        $fetch = JenisKendaraan::all();
         return response()->json([
             'status' => 'success',
             'code' => 200,
@@ -261,9 +255,7 @@ class OptionsController extends Controller
     }
 
     public function dataUnitKerja (Request $request) {
-        $limit = $request->limit ? $request->limit : 50;
-        $offset = $request->offset ? $request->offset : 0;
-        $fetch = UnitKerja::limit($limit)->offset($offset)->get();
+        $fetch = UnitKerja::all();
         return response()->json([
             'status' => 'success',
             'code' => 200,
@@ -333,9 +325,7 @@ class OptionsController extends Controller
     }
 
     public function dataJabatan (Request $request) {
-        $limit = $request->limit ? $request->limit : 50;
-        $offset = $request->offset ? $request->offset : 0;
-        $fetch = Jabatan::limit($limit)->offset($offset)->get();
+        $fetch = Jabatan::all();
         return response()->json([
             'status' => 'success',
             'code' => 200,
@@ -405,9 +395,7 @@ class OptionsController extends Controller
     }
 
     public function dataJenisServis (Request $request) {
-        $limit = $request->limit ? $request->limit : 50;
-        $offset = $request->offset ? $request->offset : 0;
-        $fetch = JenisServis::limit($limit)->offset($offset)->get();
+        $fetch = JenisServis::all();
         return response()->json([
             'status' => 'success',
             'code' => 200,
@@ -480,7 +468,7 @@ class OptionsController extends Controller
         $user = auth()->user();
         if($user->role_id != 1) {
             $validator = Validator::make($request->all(), [
-                'nip' => 'required|integer',
+                'nip' => 'required',
             ]);
             if($validator->fails()){
                 return response()->json([

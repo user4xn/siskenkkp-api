@@ -214,8 +214,6 @@ class AdminController extends Controller
                 'message' => $validator->errors(),
             ],400);
         }
-        $limit = $request->limit ? $request->limit : 50;
-        $offset = $request->offset ? $request->offset : 0;
         $fetch = Pinjam::with(['detailPinjaman.kendaraan'])
             ->select(
                 'id', 
@@ -246,8 +244,6 @@ class AdminController extends Controller
                 return $query->whereBetween('tglpinjam', [$request->start_date, $request->end_date]);
             })
             ->orderBy('pinjam.created_at', 'DESC')
-            ->limit($limit)
-            ->offset($offset)
             ->get();
         $data = [];
         foreach ($fetch as $pinjam) {

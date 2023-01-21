@@ -38,8 +38,6 @@ class ApprovalController extends Controller
                 'message' => $validator->errors(),
             ],400);
         }
-        $limit = $request->limit ? $request->limit : 50;
-        $offset = $request->offset ? $request->offset : 0;
         $fetch = Pinjam::with(['detailPinjaman.kendaraan'])
             ->select(
                 'id', 
@@ -75,8 +73,6 @@ class ApprovalController extends Controller
                 return $query->where('status', 'Diajukan');
             })
             ->orderBy('pinjam.created_at', 'DESC')
-            ->limit($limit)
-            ->offset($offset)
             ->get();
         $data = [];
         foreach ($fetch as $pinjam) {

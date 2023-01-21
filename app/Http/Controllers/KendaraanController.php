@@ -27,8 +27,6 @@ class KendaraanController extends Controller
                 'message' => 'Unauthorized User Ability',
             ],400);
         }
-        $limit = $request->limit ? $request->limit : 50;
-        $offset = $request->offset ? $request->offset : 0;
         if($request->search){
             $request->idmerk = null;
             $request->idjenis = null;
@@ -53,8 +51,6 @@ class KendaraanController extends Controller
             ->when($request->search && !$request->idmerk && !$request->idjenis && !$request->idtype, function ($query) use ($request){
                 return $query->where('nopolisi', 'LIKE', '%'.$request->search.'%');
             })
-            ->limit($limit)
-            ->offset($offset)
             ->get();
         if (count($fetch) < 1) {
             return response()->json([
