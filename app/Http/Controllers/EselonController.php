@@ -38,7 +38,13 @@ class EselonController extends Controller
             ->when($request->tipe, function ($query) use ($request){
                 return $query->where('tipe', $request->tipe);
             })
-            ->select('id', 'nip', 'nama', 'tipe', 'created_at')
+            ->select(
+                'id', 
+                'nip', 
+                'nama', 
+                DB::raw('if(tipe = "es1", "Unit Eselon I", if(tipe = "es2", "Unit Eselon II", if(tipe = "es3", "Unit Eselon III", if(tipe = "es4", "Unit Eselon IV", "Unknown Eselon")))) AS tipe'), 
+                'created_at'
+            )
             ->get();
         if (count($fetch) < 1) {
             return response()->json([
