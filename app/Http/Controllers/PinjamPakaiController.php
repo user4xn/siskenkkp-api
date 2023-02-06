@@ -194,7 +194,7 @@ class PinjamPakaiController extends Controller
             'foto.*.*' => 'mimes:jpg,jpeg,png,svg,webp|max:10240'
         ]);
         if($validator->fails()){
-            if($validator->errors()->messages()['idkdrn.0'] || $validator->errors()->messages()['idkdrn']) {
+            if($validator->errors()->messages()['idkdrn'] || $validator->errors()->messages()['idkdrn.0']) {
                 return response()->json([
                     'status' => 'failed',
                     'code' => 400,
