@@ -315,6 +315,7 @@ class AdminController extends Controller
             $fetch = Pegawai::leftjoin('user_pegawai', 'user_pegawai.nip', '=', 'pegawai.nip')
             ->select('pegawai.*')
             ->whereRaw('user_pegawai.id IS NULL')
+            ->limit(20)
             ->get();
             $num = 0;
             foreach ($fetch as $nonUser) {
