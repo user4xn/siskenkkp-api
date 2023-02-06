@@ -187,6 +187,7 @@ class PinjamPakaiController extends Controller
             'nippenanggungjawab' => 'required',
             'nippemakai' => 'required',
             'tglpengembalian' => 'date|required_if:jenispinjam,==,PPKO',
+            'idkdrn' => 'required',
             'idkdrn.*' => 'required|exists:kendaraan,id',
             'kmsebelum.*' => 'required|integer',
             'nomorsk.*' => 'required_if:jenispinjam,==,KOJ',
