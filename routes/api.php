@@ -34,6 +34,7 @@ Route::group(['middleware' => 'api','prefix' => 'auth'], function ($router) {
 Route::group(['middleware' => 'api','prefix' => 'admin'], function ($router) {
     Route::get('/users', [AdminController::class, 'users']);
     Route::get('/users/{user_id}', [AdminController::class, 'userDetailAbility']);
+    Route::post('/users/create-by-pegawai', [AdminController::class, 'userCreateByPegawai']);
     Route::put('/users/update-ability', [AdminController::class, 'userUpdateAbility']);
     Route::get('/pinjam-pakai/{tipe}', [AdminController::class, 'pinjaman']);
     Route::get('/pinjam-pakai/{tipe}/detail/{id_pinjaman}', [AdminController::class, 'detailPinjaman']);

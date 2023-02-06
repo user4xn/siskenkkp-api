@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Abilities;
 use App\Models\AbilityMenu;
 use App\Models\User;
+use App\Models\UserPegawai;
+use App\Models\Pegawai;
 use App\Models\UserAbility;
 use App\Models\Pinjam;
 use App\Http\Controllers\PinjamPakaiController;
@@ -305,5 +307,46 @@ class AdminController extends Controller
     public function lastestRecord (Request $request) {
         $PinjamPakaiController = new PinjamPakaiController();
         return $PinjamPakaiController->lastestRecord($request);
+    }
+
+    public function userCreateByPegawai () {
+        DB::beginTransaction();
+        try{
+            $fetch = Pegawai::leftjoin('user_pegawai', 'user_pegawai.nip', '=', 'pegawai.nip')
+            ->select('pegawai.*')
+            ->whereRaw('user_pegawai.id IS NULL')
+            ->get();
+            $num = 0;
+            foreach ($fetch as $nonUser) {
+                $num++;
+                $name = explode(',', $nonUser->nama);
+                $lowered = strtolower($name[0]);
+                $cleaned = preg_replace('/[^A-Za-z0-9\-]/', '', $lowered);
+                $email = $cleaned.'@site.com';
+                $nip = $nonUser->nip;
+                $user = new User();
+                $user->email = $email;
+                $user->role_id = 2;
+                $user->password = bcrypt($nip);
+                $user->save();
+                $userPegawai = new UserPegawai();
+                $userPegawai->userid = $user->id;
+                $userPegawai->nip = $nip;
+                $userPegawai->save();
+            }
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'code' => 400,
+                'message' => 'created '.$num.' user by pegawai',
+            ],400);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'failed',
+                'code' => 400,
+                'message' => $th->getMessage(),
+            ],400);
+        }
     }
 }
