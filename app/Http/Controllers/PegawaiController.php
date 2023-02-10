@@ -145,8 +145,8 @@ class PegawaiController extends Controller
             ],400);
         }
         $validator = Validator::make($request->all(), [
-            'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|confirmed|min:6',
+            'email' => 'string|email|max:100|unique:users',
+            'password' => 'string|confirmed|min:6',
             'role_id' => 'required|integer:exists:roles,id',
             'nama' => 'required',
             'nip' => 'required|unique:pegawai',
@@ -174,32 +174,67 @@ class PegawaiController extends Controller
                     ],400);
                 }
             }
-            $user = new User();
-            $user->email = $request->email;
-            $user->role_id = $request->role_id;
-            $user->password = bcrypt($request->password);
-            $user->save();
-            $pegawai = new Pegawai();
-            $pegawai->nip = $request->nip;
-            $pegawai->nama = $request->nama;
-            $pegawai->jk = $request->jk;
-            $pegawai->alamat = $request->alamat;
-            $pegawai->idbiro = $request->idbiro;
-            $pegawai->idjabatan = $request->idjabatan;
-            $pegawai->save();
-            $userPegawai = new UserPegawai();
-            $userPegawai->userid = $user->id;
-            $userPegawai->nip = $request->nip;
-            $userPegawai->save();
-            $user->detail = $pegawai;
-            if($request->abilities){
-                $data_abilities = $request->abilities;
-                foreach ($data_abilities as $ability) {
-                    $userAbility = new UserAbility();
-                    $userAbility->user_id = $user->id;
-                    $userAbility->ability_id = $ability['ability_id'];
-                    $userAbility->ability_menu_id = $ability['ability_menu_id'];
-                    $userAbility->save();
+            if($request->email != null) {
+                $user = new User();
+                $user->email = $request->email;
+                $user->role_id = $request->role_id;
+                $user->password = bcrypt($request->password);
+                $user->save();
+                $pegawai = new Pegawai();
+                $pegawai->nip = $request->nip;
+                $pegawai->nama = $request->nama;
+                $pegawai->jk = $request->jk;
+                $pegawai->alamat = $request->alamat;
+                $pegawai->idbiro = $request->idbiro;
+                $pegawai->idjabatan = $request->idjabatan;
+                $pegawai->save();
+                $userPegawai = new UserPegawai();
+                $userPegawai->userid = $user->id;
+                $userPegawai->nip = $request->nip;
+                $userPegawai->save();
+                $user->detail = $pegawai;
+                if($request->abilities){
+                    $data_abilities = $request->abilities;
+                    foreach ($data_abilities as $ability) {
+                        $userAbility = new UserAbility();
+                        $userAbility->user_id = $user->id;
+                        $userAbility->ability_id = $ability['ability_id'];
+                        $userAbility->ability_menu_id = $ability['ability_menu_id'];
+                        $userAbility->save();
+                    }
+                }
+            } else {
+                $name = explode(',', $request->nama);
+                $lowered = strtolower($name[0]);
+                $cleaned = preg_replace('/[^A-Za-z0-9\-]/', '', $lowered);
+                $email = $cleaned.'@site.com';
+                $user = new User();
+                $user->email = $email;
+                $user->role_id = $request->role_id;
+                $user->password = bcrypt($request->nip);
+                $user->save();
+                $pegawai = new Pegawai();
+                $pegawai->nip = $request->nip;
+                $pegawai->nama = $request->nama;
+                $pegawai->jk = $request->jk;
+                $pegawai->alamat = $request->alamat;
+                $pegawai->idbiro = $request->idbiro;
+                $pegawai->idjabatan = $request->idjabatan;
+                $pegawai->save();
+                $userPegawai = new UserPegawai();
+                $userPegawai->userid = $user->id;
+                $userPegawai->nip = $request->nip;
+                $userPegawai->save();
+                $user->detail = $pegawai;
+                if($request->abilities){
+                    $data_abilities = $request->abilities;
+                    foreach ($data_abilities as $ability) {
+                        $userAbility = new UserAbility();
+                        $userAbility->user_id = $user->id;
+                        $userAbility->ability_id = $ability['ability_id'];
+                        $userAbility->ability_menu_id = $ability['ability_menu_id'];
+                        $userAbility->save();
+                    }
                 }
             }
             DB::commit();
@@ -209,7 +244,6 @@ class PegawaiController extends Controller
                 'message' => 'Sucessfully Created',
                 'data' => $user
             ], 201);
-
         } catch (\Throwable $th) {
             DB::rollback();
             return response()->json([
