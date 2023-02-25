@@ -65,7 +65,6 @@ class PinjamPakaiController extends Controller
             }
         }
         $validator = Validator::make($request->all(), [
-            'nip' => 'required|exists:pegawai,nip',
             'start_date' => 'date',
             'end_date' => 'date',
         ]);
@@ -94,7 +93,6 @@ class PinjamPakaiController extends Controller
                 'jenispinjam',
                 'tglpengembalian'
             )
-            ->where('nip', $request->nip)
             ->with('eselon1')
             ->with('eselon2')
             ->with('eselon3')

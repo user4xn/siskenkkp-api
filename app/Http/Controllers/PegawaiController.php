@@ -263,10 +263,18 @@ class PegawaiController extends Controller
                 'message' => 'Unauthorized User Ability',
             ],400);
         }
-        $validator = Validator::make($request->all(), [
-            'idbiro' => 'exists:unit_kerja,id',
-            'idjabatan' => 'exists:jabatan,id',
-        ]);
+        if($request->password){
+            $validator = Validator::make($request->all(), [
+                'idbiro' => 'exists:unit_kerja,id',
+                'idjabatan' => 'exists:jabatan,id',
+                'password' => 'string|confirmed|min:6',
+            ]);
+        } else {
+            $validator = Validator::make($request->all(), [
+                'idbiro' => 'exists:unit_kerja,id',
+                'idjabatan' => 'exists:jabatan,id',
+            ]);
+        }
         if($validator->fails()){
             return response()->json([
                 'status' => 'failed',
@@ -290,6 +298,11 @@ class PegawaiController extends Controller
             $dataPegawai = Pegawai::select('nip', 'nama', 'jk', 'alamat', 'idbiro', 'idjabatan')
                 ->where('nip', $request->nip)
                 ->first();
+            if ($request->password) {
+                $dataUser = User::where('id', $dataUserPegawai->userid)->update([
+                    'password' => bcrypt($request->password)
+                ]);
+            }
             if (!$dataPegawai) {
                 return response()->json([
                     'status' => 'failed',
