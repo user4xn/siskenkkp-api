@@ -16,16 +16,6 @@ class EselonController extends Controller
     }
 
     public function eselon (Request $request) {
-        $validator = Validator::make($request->all(), [
-            'nip' => 'required|exists:pegawai,nip',
-        ]);
-        if($validator->fails()){
-            return response()->json([
-                'status' => 'failed',
-                'code' => 400,
-                'message' => $validator->errors(),
-            ],400);
-        }
         $checkAbility = (new AuthController)->checkAbility('Data Unit Eselon', 'View');
         if(!$checkAbility){
             return response()->json([
@@ -34,8 +24,7 @@ class EselonController extends Controller
                 'message' => 'Unauthorized User Ability',
             ],400);
         }
-        $fetch = Eselon::where('nip', $request->nip)
-            ->when($request->tipe, function ($query) use ($request){
+        $fetch = Eselon::when($request->tipe, function ($query) use ($request){
                 return $query->where('tipe', $request->tipe);
             })
             ->select(
